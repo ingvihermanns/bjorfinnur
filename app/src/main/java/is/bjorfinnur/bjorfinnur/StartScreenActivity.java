@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.widget.SearchView;
 
 public class StartScreenActivity extends AppCompatActivity {
+
     SearchView mySearchView;
 
     @Override
