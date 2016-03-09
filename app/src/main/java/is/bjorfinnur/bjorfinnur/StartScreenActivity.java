@@ -12,7 +12,7 @@ public class StartScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu_screen);
+        setContentView(R.layout.activity_start_screen);
 
         mySearchView = (SearchView) findViewById(R.id.search_view);
 
@@ -29,10 +29,9 @@ public class StartScreenActivity extends AppCompatActivity {
             }
 
             private void callSearch(String query) {
-                Intent mainIntent = new Intent(StartScreenActivity.this, BeerListScreenActivity.class);
-                mainIntent.putExtra("query", query);
-                StartScreenActivity.this.startActivity(mainIntent);
-                StartScreenActivity.this.finish();
+                Intent beerListIntent = new Intent(StartScreenActivity.this, BeerListScreenActivity.class);
+                beerListIntent.putExtra("query", query);
+                StartScreenActivity.this.startActivity(beerListIntent);
             }
         });
     }
