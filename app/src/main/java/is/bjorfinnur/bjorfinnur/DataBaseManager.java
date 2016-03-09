@@ -194,9 +194,9 @@ public class DataBaseManager extends SQLiteOpenHelper {
         String manufacturer;
         String type;
 
-        String query = "SELECT * FROM Beers WHERE name LIKE ?";
+        String query = "SELECT * FROM Beers WHERE name LIKE ? OR manufacturer LIKE ? OR type LIKE ?";
 
-        Cursor cursor = myDataBase.rawQuery(query, new String[] {'%'+searchString+'%'});
+        Cursor cursor = myDataBase.rawQuery(query, new String[] {'%'+searchString+'%','%'+searchString+'%','%'+searchString+'%'});
 
         if(cursor != null){
 
@@ -212,11 +212,6 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
                 cursor.moveToNext();
 
-            }
-            for(Beer beer: beerList) {
-                Log.i("Grimbill", beer.getBeerName());
-                Log.i("Grimbill", beer.getManufacturer());
-                Log.i("Grimbill", beer.getType());
             }
 
             cursor.close();
