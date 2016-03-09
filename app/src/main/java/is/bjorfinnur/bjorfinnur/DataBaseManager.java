@@ -39,6 +39,8 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
     }
 
+
+
     /**
      * Creates a empty database on the system and rewrites it with your own database.
      * */
@@ -196,16 +198,18 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 beerList.add(new Beer(beerName, manufacturer, type));
 
                 cursor.moveToNext();
+
             }
+            for(Beer beer: beerList) {
+                Log.i("Grimbill", beer.getBeerName());
+                Log.i("Grimbill", beer.getManufacturer());
+                Log.i("Grimbill", beer.getType());
+            }
+
+            cursor.close();
         }
 
-        for(Beer beer: beerList) {
-            Log.i("Grimbill", beer.getBeerName());
-            Log.i("Grimbill", beer.getManufacturer());
-            Log.i("Grimbill", beer.getType());
-        }
 
-        cursor.close();
 
         return beerList;
     }

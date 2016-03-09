@@ -38,7 +38,6 @@ public class StartScreenActivity extends AppCompatActivity {
                 Intent mainIntent = new Intent(StartScreenActivity.this, BeerListScreenActivity.class);
                 mainIntent.putExtra("query", query);
                 StartScreenActivity.this.startActivity(mainIntent);
-                StartScreenActivity.this.finish();
             }
         });
     }
