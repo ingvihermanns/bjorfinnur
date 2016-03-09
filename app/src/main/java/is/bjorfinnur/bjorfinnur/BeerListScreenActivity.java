@@ -1,5 +1,6 @@
 package is.bjorfinnur.bjorfinnur;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -14,7 +15,7 @@ public class BeerListScreenActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_beer_list_screen);
 
-        queryTextView = (TextView) findViewById(R.id.search_view);
+        queryTextView = (TextView) findViewById(R.id.queryTextView);
         String query = getIntent().getStringExtra("query");
 
         queryTextView.setText(query);
