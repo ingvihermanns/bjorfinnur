@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class DataBaseHelper extends SQLiteOpenHelper {
+public class DataBaseManager extends SQLiteOpenHelper {
 
     // Default system data path
     private String dataBasePath;
@@ -28,7 +30,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
      * @param context
      */
-    public DataBaseHelper(Context context) {
+    public DataBaseManager(Context context) {
 
         super(context, DB_NAME, null, 1);
         this.myContext = context;
@@ -168,6 +170,33 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cursor.close();
 
         return data;
+    }
+
+    public List<Beer> searchBeers(String searchString) {
+
+        List<Beer> beerList = new ArrayList<Beer>();
+        String beerName;
+        String manufacturer;
+        String type;
+
+        String query = "SELECT * FROM Beers WHERE name LIKE %?%";
+
+        Cursor cursor = myDataBase.rawQuery(query, new String[] {searchString});
+
+        if(cursor.moveToNext()) {
+            do{
+                beerName = cursor.getString(cursor.getColumnIndex("name"));
+                manufacturer = cursor.getString(cursor.getColumnIndex("manufacturer"));
+                type = cursor.getString(cursor.getColumnIndex("type"));
+
+                beerList.add(new Beer(beerName, manufacturer, type));
+
+            }while(cursor.moveToNext());
+        }
+
+        cursor.close();
+
+        return beerList;
     }
 
 }

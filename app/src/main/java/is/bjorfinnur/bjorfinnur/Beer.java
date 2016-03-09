@@ -7,6 +7,12 @@ public class Beer {
     private String manufacturer;
     private String type;
 
+    public Beer(String beerName, String manufacturer, String type) {
+        this.beerName = beerName;
+        this.manufacturer = manufacturer;
+        this.type = type;
+    }
+
     public String getBeerName() {
         return beerName;
     }
