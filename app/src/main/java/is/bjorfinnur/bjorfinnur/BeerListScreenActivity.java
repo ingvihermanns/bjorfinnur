@@ -3,15 +3,15 @@ package is.bjorfinnur.bjorfinnur;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 
-/**
- * Created by Notandi on 9.3.2016.
- */
-public class BeerListScreenActivity {
+public class BeerListScreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /*
         setContentView(R.layout.activity_beer_list_screen);
 
         new Handler().postDelayed(new Runnable() {
@@ -22,5 +22,6 @@ public class BeerListScreenActivity {
                 SplashScreenActivity.this.finish();
             }
         }, SPLASH_DISPLAY_TIME);
+        */
     }
 }

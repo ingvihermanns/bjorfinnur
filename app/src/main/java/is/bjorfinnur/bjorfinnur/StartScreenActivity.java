@@ -30,7 +30,7 @@ public class StartScreenActivity extends AppCompatActivity {
             }
 
             private void callSearch(String query) {
-                Intent mainIntent = new Intent(StartScreenActivity.this, StartScreenActivity.class);
+                Intent mainIntent = new Intent(StartScreenActivity.this, BeerListScreenActivity.class);
                 mainIntent.putExtra("query", query);
                 StartScreenActivity.this.startActivity(mainIntent);
                 StartScreenActivity.this.finish();

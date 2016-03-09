@@ -1,8 +1,5 @@
 package is.bjorfinnur.bjorfinnur;
 
-/**
- * Created by Notandi on 9.3.2016.
- */
 public class Bar {
 
     private String barName;
