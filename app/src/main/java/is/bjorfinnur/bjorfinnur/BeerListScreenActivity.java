@@ -19,7 +19,5 @@ public class BeerListScreenActivity extends AppCompatActivity {
 
         queryTextView.setText(query);
 
-
-
     }
 }

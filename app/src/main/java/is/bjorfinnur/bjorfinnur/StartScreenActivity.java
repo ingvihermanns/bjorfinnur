@@ -5,9 +5,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.SearchView;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+
 public class StartScreenActivity extends AppCompatActivity {
 
     SearchView mySearchView;
+
+    DataBaseManager myDataBaseManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

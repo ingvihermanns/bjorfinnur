@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -179,19 +180,30 @@ public class DataBaseManager extends SQLiteOpenHelper {
         String manufacturer;
         String type;
 
-        String query = "SELECT * FROM Beers WHERE name LIKE %?%";
+        String query = "SELECT * FROM Beers WHERE name LIKE ?";
 
-        Cursor cursor = myDataBase.rawQuery(query, new String[] {searchString});
+        Cursor cursor = myDataBase.rawQuery(query, new String[] {'%'+searchString+'%'});
 
-        if(cursor.moveToNext()) {
-            do{
+        if(cursor != null){
+
+            cursor.moveToFirst();
+
+            for(int i = 0; i < cursor.getCount(); i++){
+
                 beerName = cursor.getString(cursor.getColumnIndex("name"));
                 manufacturer = cursor.getString(cursor.getColumnIndex("manufacturer"));
                 type = cursor.getString(cursor.getColumnIndex("type"));
 
                 beerList.add(new Beer(beerName, manufacturer, type));
 
-            }while(cursor.moveToNext());
+                cursor.moveToNext();
+            }
+        }
+
+        for(Beer beer: beerList) {
+            Log.i("Grimbill", beer.getBeerName());
+            Log.i("Grimbill", beer.getManufacturer());
+            Log.i("Grimbill", beer.getType());
         }
 
         cursor.close();
