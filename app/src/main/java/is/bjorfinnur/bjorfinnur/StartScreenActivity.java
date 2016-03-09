@@ -1,7 +1,6 @@
 package is.bjorfinnur.bjorfinnur;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.SearchView;
@@ -15,7 +14,7 @@ public class StartScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_screen);
 
-
+        mySearchView = (SearchView) findViewById(R.id.search_view);
 
         mySearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

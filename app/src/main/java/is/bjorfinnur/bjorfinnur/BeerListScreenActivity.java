@@ -1,27 +1,25 @@
 package is.bjorfinnur.bjorfinnur;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.TextView;
 
 public class BeerListScreenActivity extends AppCompatActivity {
+
+    TextView queryTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*
         setContentView(R.layout.activity_beer_list_screen);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent mainIntent = new Intent(SplashScreenActivity.this, StartScreenActivity.class);
-                SplashScreenActivity.this.startActivity(mainIntent);
-                SplashScreenActivity.this.finish();
-            }
-        }, SPLASH_DISPLAY_TIME);
-        */
+        queryTextView = (TextView) findViewById(R.id.search_view);
+        String query = getIntent().getStringExtra("query");
+
+        queryTextView.setText(query);
+
+
+
     }
 }
