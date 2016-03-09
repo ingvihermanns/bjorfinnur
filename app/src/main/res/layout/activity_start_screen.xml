@@ -68,6 +68,15 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:text="Skoða bjóra"
+            android:id="@+id/search_all_beers_button"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:backgroundTint="#ffffff" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:text="Skoða bari"
             android:id="@+id/bars_button"
             android:layout_gravity="center_horizontal"
@@ -75,10 +84,4 @@
             android:backgroundTint="#ffffff" />
 
     </LinearLayout>
-
-
-
-
-
-
 </LinearLayout>
