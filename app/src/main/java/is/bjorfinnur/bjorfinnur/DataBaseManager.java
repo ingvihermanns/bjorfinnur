@@ -37,6 +37,19 @@ public class DataBaseManager extends SQLiteOpenHelper {
         // Get the path from the current system
         dataBasePath = myContext.getDatabasePath(DB_NAME).getPath();
 
+
+        try {
+            this.createDataBase();
+        } catch (IOException ioe) {
+            throw new Error("Unable to create database");
+        }
+
+        try {
+            this.openDataBase();
+        }catch(SQLException sqle){
+            throw new Error("Unable to open database");
+        }
+
     }
 
 
