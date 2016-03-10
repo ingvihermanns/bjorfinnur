@@ -21,7 +21,6 @@
         android:id="@+id/imageView"
         android:src="@mipmap/bjorfinnur_logo"
         android:alpha="1"
-        android:layout_alignParentBottom="true"
         android:minHeight="300dp"
         android:minWidth="300dp"
         android:maxHeight="300dp"
@@ -34,10 +33,8 @@
         android:text="Bjórfinnur"
         android:textStyle="bold"
         android:textColor="#ffffff"
-        android:textSize="50dp"
-        android:id="@+id/textView"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:textSize="50sp"
+        android:id="@+id/textView" />
 
     <LinearLayout
         android:orientation="vertical"

@@ -7,7 +7,8 @@ import android.os.Bundle;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-    private final int SPLASH_DISPLAY_TIME = 2000;
+    @SuppressWarnings("FieldCanBeLocal")
+    private static final int SPLASH_DISPLAY_TIME = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
