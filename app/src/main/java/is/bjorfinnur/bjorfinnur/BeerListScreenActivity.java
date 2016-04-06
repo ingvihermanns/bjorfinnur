@@ -11,14 +11,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class BeerListScreenActivity extends AppCompatActivity {
 
-    TextView queryTextView;
     ListView listView;
     DataBaseManager dataBaseManager;
     List<Beer> beerList;

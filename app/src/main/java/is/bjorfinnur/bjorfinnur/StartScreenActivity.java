@@ -35,7 +35,6 @@ public class StartScreenActivity extends AppCompatActivity {
                 return true;
             }
 
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 return true;
