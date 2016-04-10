@@ -5,22 +5,20 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DataBaseManager extends SQLiteOpenHelper {
 
     // Default system data path
-    private String dataBasePath;
+    private final String dataBasePath;
     // Name of database to be used
-    private static String DB_NAME = "BeerFinder.db";
+    private static final String DB_NAME = "BeerFinder.db";
 
     private SQLiteDatabase myDataBase;
 
@@ -31,79 +29,59 @@ public class DataBaseManager extends SQLiteOpenHelper {
      * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
      */
     public DataBaseManager(Context context) {
-
         super(context, DB_NAME, null, 1);
-        this.myContext = context;
-        // Get the path from the current system
-        dataBasePath = myContext.getDatabasePath(DB_NAME).getPath();
 
+        myContext = context;
+        dataBasePath = myContext.getDatabasePath(DB_NAME).getPath();
 
         try {
             this.createDataBase();
-        } catch (IOException ioe) {
+        } catch (Exception e) {
             throw new Error("Unable to create database");
         }
 
         try {
             this.openDataBase();
-        }catch(SQLException sqle){
+        } catch (Exception e) {
             throw new Error("Unable to open database");
         }
-
     }
-
 
 
     /**
      * Creates a empty database on the system and rewrites it with your own database.
-     * */
-    public void createDataBase() throws IOException {
-
+     */
+    private void createDataBase() {
         boolean dbExist = checkDataBase();
-
-        if(dbExist){
-
-        }else{
-
+        if (!dbExist) {
             //By calling this method and empty database will be created into the default system path
             //of your application so we are gonna be able to overwrite that database with our database.
             this.getReadableDatabase();
 
             try {
-
                 copyDataBase();
-
             } catch (IOException e) {
-
                 throw new Error("Error copying database");
-
             }
         }
-
     }
 
     /**
      * Check if the database already exist to avoid re-copying the file each time you open the application.
-     * @return true if it exists, false if it doesn't
+     * returns true if it exists, false if it doesn't
      */
-    private boolean checkDataBase(){
-
+    private boolean checkDataBase() {
         SQLiteDatabase checkDB = null;
 
-        try{
+        try {
             String myPath = dataBasePath + DB_NAME;
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
-
-        }catch(SQLiteException e){
-
-            //database does't exist yet.
-
+        } catch (SQLiteException e) {
+            //database doesn't exist yet.
         }
 
-        if(checkDB != null){
-
+        if (checkDB != null) {
             checkDB.close();
-
         }
 
         return checkDB != null;
@@ -112,9 +90,9 @@ public class DataBaseManager extends SQLiteOpenHelper {
     /**
      * Copies your database from your local assets-folder to the just created empty database in the
      * system folder, from where it can be accessed and handled.
-     * This is done by transfering bytestream.
-     * */
-    private void copyDataBase() throws IOException{
+     * This is done by transferring byte stream.
+     */
+    private void copyDataBase() throws IOException {
 
         //Open your local db as the input stream
         InputStream myInput = myContext.getAssets().open(DB_NAME);
@@ -125,10 +103,10 @@ public class DataBaseManager extends SQLiteOpenHelper {
         //Open the empty db as the output stream
         OutputStream myOutput = new FileOutputStream(outFileName);
 
-        //transfer bytes from the inputfile to the outputfile
+        //transfer bytes from the input file to the output file
         byte[] buffer = new byte[1024];
         int length;
-        while ((length = myInput.read(buffer))>0){
+        while ((length = myInput.read(buffer)) > 0) {
             myOutput.write(buffer, 0, length);
         }
 
@@ -139,8 +117,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
     }
 
-    public void openDataBase() throws SQLException {
-
+    private void openDataBase() {
         //Open the database
         String myPath = dataBasePath + DB_NAME;
         myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
@@ -149,46 +126,18 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
     @Override
     public synchronized void close() {
-
-        if(myDataBase != null)
+        if (myDataBase != null)
             myDataBase.close();
-
         super.close();
-
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
-
-    }
+    public void onCreate(SQLiteDatabase db) { }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-    }
-
-    // Method to test if the database helper works
-    public String testData() {
-
-        String select = "SELECT name FROM Beers WHERE _id = ?";
-
-        Cursor cursor = myDataBase.rawQuery(select, new String[] {"2"});
-
-        String data = "";
-
-        if(cursor.moveToNext()) {
-            do{
-                data = cursor.getString(cursor.getColumnIndex("name"));
-            }while(cursor.moveToNext());
-        }
-
-        cursor.close();
-
-        return data;
-    }
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { }
 
     public List<Beer> searchBeers(String searchString) {
-
         List<Beer> beerList = new ArrayList<>();
         String beerName;
         String manufacturer;
@@ -196,29 +145,25 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
         String query = "SELECT * FROM Beers WHERE name LIKE ? OR manufacturer LIKE ? OR type LIKE ?";
 
-        Cursor cursor = myDataBase.rawQuery(query, new String[] {'%'+searchString+'%','%'+searchString+'%','%'+searchString+'%'});
+        String[] parameters = new String[]{
+                "%" + searchString + "%",
+                "%" + searchString + "%",
+                "%" + searchString + "%"};
+        Cursor cursor = myDataBase.rawQuery(query, parameters);
 
-        if(cursor != null){
-
+        if (cursor != null) {
             cursor.moveToFirst();
 
-            for(int i = 0; i < cursor.getCount(); i++){
-
+            for (int i = 0; i < cursor.getCount(); i++) {
                 beerName = cursor.getString(cursor.getColumnIndex("name"));
                 manufacturer = cursor.getString(cursor.getColumnIndex("manufacturer"));
                 type = cursor.getString(cursor.getColumnIndex("type"));
-
                 beerList.add(new Beer(beerName, manufacturer, type));
 
                 cursor.moveToNext();
-
             }
-
             cursor.close();
         }
-
-
-
         return beerList;
     }
 
