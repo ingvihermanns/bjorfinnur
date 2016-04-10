@@ -85,7 +85,28 @@ public class MapsActivity extends FragmentActivity {
 
     }
 
+    /*
+    private float[] calculateDistance(List<GpsCoordiantes> GpsList) {
+
+        float[] results = new float[GpsList.size()];
+
+        Location mylocation = getMyLocation();
+        Location loc1 = new Location("");
+        loc1.setLatitude(mylocation.getLatitude());
+        loc1.setLongitude(mylocation.getLongitude());
 
 
+        for (int i = 0; i < GpsList.size(); i++) {
+            GpsCoordinates gpscord = GpsList.get(i);
+            Location loc2 = new Location("");
+            loc2.setLatitude();
+            loc2.setLongitude();
+            float distanceInMeters = loc1.distanceTo(loc2);
+            results[i] = distanceInMeters;
+        }
 
+        return results;
+
+    }
+    */
 }

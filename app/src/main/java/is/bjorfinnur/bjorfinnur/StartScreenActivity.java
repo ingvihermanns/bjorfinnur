@@ -54,4 +54,6 @@ public class StartScreenActivity extends AppCompatActivity {
         mainIntent.putExtra("query", query);
         StartScreenActivity.this.startActivity(mainIntent);
     }
+
+
 }
