@@ -14,6 +14,5 @@ public class SecondTab extends Activity {
         TextView textView = new TextView(this);
         textView.setText("Second Tab");
         setContentView(textView);
-
     }
 }
