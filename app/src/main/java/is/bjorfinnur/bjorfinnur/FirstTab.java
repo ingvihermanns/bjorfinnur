@@ -39,6 +39,12 @@ public class FirstTab extends Activity {
         newBeerList(beerList);
     }
 
+    public List<Gpscordinates> populateMap(String query){
+        List<Gpscordinates> gpscordList = dataBaseManager.getCoordinates(query);
+        return gpscordList;
+    }
+
+
     private void newBeerList(List<Beer> beerList){
         setAdapter(new BeerListArrayAdapter(this, R.layout.beer_list_row, beerList));
     }

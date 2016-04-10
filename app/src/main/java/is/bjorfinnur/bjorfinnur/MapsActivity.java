@@ -1,38 +1,50 @@
 package is.bjorfinnur.bjorfinnur;
 
-        import android.content.Context;
-        import android.location.Address;
-        import android.location.Criteria;
-        import android.location.Geocoder;
-        import android.location.Location;
-        import android.location.LocationManager;
-        import android.provider.SyncStateContract;
-        import android.support.v4.app.FragmentActivity;
-        import android.os.Bundle;
-        import android.view.View;
+import android.content.Context;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
+import android.provider.SyncStateContract;
+import android.support.v4.app.FragmentActivity;
+import android.os.Bundle;
+import android.view.View;
 
-        import com.google.android.gms.location.FusedLocationProviderApi;
-        import com.google.android.gms.maps.CameraUpdateFactory;
-        import com.google.android.gms.maps.GoogleMap;
-        import com.google.android.gms.maps.OnMapReadyCallback;
-        import com.google.android.gms.maps.SupportMapFragment;
-        import com.google.android.gms.maps.model.CameraPosition;
-        import com.google.android.gms.maps.model.LatLng;
-        import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.location.FusedLocationProviderApi;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-        import java.io.IOException;
-        import java.util.List;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap;
-
+    private float[] latitude;
+    private float[] longtitude;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        setUpMapIfNeeded();
 
+        ArrayList<String> lat = getIntent().getStringArrayListExtra("latitude");
+        ArrayList<String> lon = getIntent().getStringArrayListExtra("longitude");
+
+        latitude = new float[lat.size()];
+        longtitude = new float[lon.size()];
+        for (int i = 0; i < latitude.length; i++) {
+            latitude[i] = Float.parseFloat(lat.get(i));
+            longtitude[i] = Float.parseFloat(lon.get(i));
+        }
+
+        setUpMapIfNeeded();
     }
 
     @Override
@@ -78,6 +90,10 @@ public class MapsActivity extends FragmentActivity {
         Location location = getMyLocation();
         LatLng myLocation = new LatLng(location.getLatitude(),location.getLongitude());
         mMap.addMarker(new MarkerOptions().position(myLocation).title("Marker"));
+        for (int i = 0; i < latitude.length; i++) {
+            mMap.addMarker(new MarkerOptions().position(
+                    new LatLng(latitude[i], longtitude[i])).title("Marker"));
+        }
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));//Moves the camera to users current longitude and latitude
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,(float) 14));
 
