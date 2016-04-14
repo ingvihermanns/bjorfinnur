@@ -84,6 +84,11 @@ public class MainScreenActivity extends TabActivity {
             Log.e("Info", "Query sent: " + query);
             ((FirstTab) currentActivity).search(query);
         }
+        else if(currentActivity instanceof SecondTab){
+            Log.e("Info", "fongum hnitin: " + query);
+            ((SecondTab) currentActivity).search(query);
+            ((SecondTab) currentActivity).populateDistance(query);
+        }
     }
 
     private List<Gpscordinates> callMap(String query) {
