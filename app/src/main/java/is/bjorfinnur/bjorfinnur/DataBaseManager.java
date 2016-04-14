@@ -304,11 +304,11 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
         Cursor cursor = myDataBase.rawQuery(query, parameters);
         String barName;
-        Price beerPrice = new Price();
         if (cursor != null) {
             cursor.moveToFirst();
 
             for (int i = 0; i < cursor.getCount(); i++) {
+                Price beerPrice = new Price();
                 barName = cursor.getString(cursor.getColumnIndex("bar_name"));
                 int pricekr = Integer.parseInt(cursor.getString(cursor.getColumnIndex("beer_price")));
                 beerPrice.setCurrency("ISK");
