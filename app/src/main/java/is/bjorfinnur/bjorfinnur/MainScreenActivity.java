@@ -51,7 +51,7 @@ public class MainScreenActivity extends TabActivity {
         /** TabSpec setContent() is used to set content for a particular tab. */
         firstTabSpec.setIndicator("Bjórar").setContent(new Intent(this,FirstTab.class));
         secondTabSpec.setIndicator("Staðir").setContent(new Intent(this, SecondTab.class));
-        thirdTabSpec.setIndicator("Test").setContent(new Intent(this, ThirdTab.class));
+        thirdTabSpec.setIndicator("Test").setContent(new Intent(this, BeerTab.class));
 
         /** Add tabSpec to the TabHost to display. */
         tabHost.addTab(firstTabSpec);

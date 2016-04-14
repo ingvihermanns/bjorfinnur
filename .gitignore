@@ -58,3 +58,5 @@ settings.gradle
 *.ipr
 *~
 *.swp
+.idea/gradle.xml
+.idea/misc.xml
