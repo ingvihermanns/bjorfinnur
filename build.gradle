@@ -7,6 +7,8 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:1.5.0'
 
+        //compile fileTree(dir: 'libs', include: ['*.jar'])
+
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
