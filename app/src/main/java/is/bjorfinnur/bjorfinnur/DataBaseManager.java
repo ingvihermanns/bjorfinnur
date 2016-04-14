@@ -138,8 +138,6 @@ public class DataBaseManager extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { }
 
 
-
-
     public List<Beer> searchBeers(String searchString) {
         List<Beer> beerList = new ArrayList<>();
         String beerName;
@@ -151,7 +149,9 @@ public class DataBaseManager extends SQLiteOpenHelper {
         String[] parameters = new String[]{
                 "%" + searchString + "%",
                 "%" + searchString + "%",
-                "%" + searchString + "%"};
+                "%" + searchString + "%"
+        };
+
         Cursor cursor = myDataBase.rawQuery(query, parameters);
 
         if (cursor != null) {
@@ -161,6 +161,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 beerName = cursor.getString(cursor.getColumnIndex("name"));
                 manufacturer = cursor.getString(cursor.getColumnIndex("manufacturer"));
                 type = cursor.getString(cursor.getColumnIndex("type"));
+
                 beerList.add(new Beer(beerName, manufacturer, type));
 
                 cursor.moveToNext();
@@ -170,18 +171,21 @@ public class DataBaseManager extends SQLiteOpenHelper {
         return beerList;
     }
 
-    public List<Gpscordinates> getCoordinates(String searchString) {
-        List<Gpscordinates> coordinatesList = new ArrayList<>();
-        float latitude;
-        float longtitude;
+    public List<Bar> searchBars(String searchString) {
 
+        List<Bar> barList = new ArrayList<>();
+        String barName;
+        String address;
+        String description;
+        String latitude;
+        String longitude;
 
-        String query = "SELECT DISTINCT Bars.latitude,Bars.longitude FROM Beers,Bars,BeersBars WHERE Beers.id == BeersBars.beer_id AND Bars.id == BeersBars.bar_id AND Beers.name LIKE ? OR Beers.manufacturer LIKE ? OR Beers.type LIKE ?";
+        String query = "SELECT * FROM Bars WHERE name LIKE ? OR address LIKE ?";
 
         String[] parameters = new String[]{
                 "%" + searchString + "%",
-                "%" + searchString + "%",
-                "%" + searchString + "%"};
+                "%" + searchString + "%"
+        };
 
         Cursor cursor = myDataBase.rawQuery(query, parameters);
 
@@ -189,9 +193,79 @@ public class DataBaseManager extends SQLiteOpenHelper {
             cursor.moveToFirst();
 
             for (int i = 0; i < cursor.getCount(); i++) {
+                barName = cursor.getString(cursor.getColumnIndex("name"));
+                address = cursor.getString(cursor.getColumnIndex("address"));
+                description = cursor.getString(cursor.getColumnIndex("description"));
+                latitude = cursor.getString(cursor.getColumnIndex("latitude"));
+                longitude = cursor.getString(cursor.getColumnIndex("longitude"));
+
+                barList.add(new Bar(barName, address, description, latitude, longitude));
+
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+        return barList;
+    }
+
+    public List<GpsCoordinates> getBarCoordinates(String searchString) {
+
+        List<GpsCoordinates> coordinatesList = new ArrayList<>();
+
+        float latitude;
+        float longitude;
+
+        String query = "SELECT DISTINCT Bars.latitude,Bars.longitude FROM Bars WHERE Bars.name LIKE ? OR Bars.address = ?";
+
+        String[] parameters = new String[]{
+                "%" + searchString + "%",
+                "%" + searchString + "%"
+        };
+
+        Cursor cursor = myDataBase.rawQuery(query, parameters);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+
+            for (int i = 0; i < cursor.getCount(); i++) {
+
                 latitude = Float.parseFloat(cursor.getString(cursor.getColumnIndex("latitude")));
-                longtitude = Float.parseFloat(cursor.getString(cursor.getColumnIndex("longitude")));
-                coordinatesList.add(new Gpscordinates(latitude,longtitude));
+                longitude = Float.parseFloat(cursor.getString(cursor.getColumnIndex("longitude")));
+                coordinatesList.add(new GpsCoordinates(latitude,longitude));
+
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+
+        return coordinatesList;
+    }
+
+    public List<GpsCoordinates> getBeerCoordinates(String searchString) {
+
+        List<GpsCoordinates> coordinatesList = new ArrayList<>();
+
+        float latitude;
+        float longitude;
+
+        String query = "SELECT DISTINCT Bars.latitude,Bars.longitude FROM Beers,Bars,BeersBars WHERE Beers.id == BeersBars.beer_id AND Bars.id == BeersBars.bar_id AND Beers.name LIKE ? OR Beers.manufacturer LIKE ? OR Beers.type LIKE ?";
+
+        String[] parameters = new String[]{
+                "%" + searchString + "%",
+                "%" + searchString + "%",
+                "%" + searchString + "%"
+        };
+
+        Cursor cursor = myDataBase.rawQuery(query, parameters);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+
+            for (int i = 0; i < cursor.getCount(); i++) {
+
+                latitude = Float.parseFloat(cursor.getString(cursor.getColumnIndex("latitude")));
+                longitude = Float.parseFloat(cursor.getString(cursor.getColumnIndex("longitude")));
+                coordinatesList.add(new GpsCoordinates(latitude,longitude));
 
                 cursor.moveToNext();
             }

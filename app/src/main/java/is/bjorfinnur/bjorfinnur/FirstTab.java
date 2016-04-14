@@ -39,8 +39,8 @@ public class FirstTab extends Activity {
         newBeerList(beerList);
     }
 
-    public List<Gpscordinates> populateMap(String query){
-        List<Gpscordinates> gpscordList = dataBaseManager.getCoordinates(query);
+    public List<GpsCoordinates> populateMap(String query){
+        List<GpsCoordinates> gpscordList = dataBaseManager.getBeerCoordinates(query);
         return gpscordList;
     }
 
