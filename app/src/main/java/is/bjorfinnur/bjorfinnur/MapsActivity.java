@@ -88,7 +88,12 @@ public class MapsActivity extends FragmentActivity {
     private void setUpMap() {
         mMap.setMyLocationEnabled(true);
         Location location = getMyLocation();
-        LatLng myLocation = new LatLng(location.getLatitude(),location.getLongitude());
+        LatLng myLocation;
+        if(location == null){
+            myLocation = new LatLng(0, 0);
+        }else{
+            myLocation = new LatLng(location.getLatitude(),location.getLongitude());
+        }
         mMap.addMarker(new MarkerOptions().position(myLocation).title("Marker"));
         for (int i = 0; i < latitude.length; i++) {
             mMap.addMarker(new MarkerOptions().position(
