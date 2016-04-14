@@ -46,7 +46,7 @@
             android:label="@string/title_activity_maps" />
         <activity android:name=".FirstTab" />
         <activity android:name=".SecondTab" />
-        <activity android:name=".ThirdTab" />
+        <activity android:name=".BeerTab" />
         <activity android:name=".MainScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

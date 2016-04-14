@@ -6,11 +6,11 @@ import android.util.Log;
 import android.widget.ExpandableListView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ThirdTab extends Activity {
+public class BeerTab extends Activity {
 
     private ExpandableListView expandableListView;
     private ExpandableListAdapter listAdapter;
@@ -50,21 +50,26 @@ public class ThirdTab extends Activity {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
+
         List<Beer> beerList = search(query);
         for(Beer beer: beerList){
-            addBeer(beer, listDataHeader, listDataChild);
+            Map<String, Price> places = dataBaseManager.getBarsFromBeer(beer);
+            addBeerCard(beer, listDataHeader, listDataChild, places);
         }
     }
 
-    private static void addBeer(Beer beer, List<String> listDataHeader, HashMap<String, List<String>> listDataChild) {
+    private static void addBeerCard(Beer beer, List<String> listDataHeader, HashMap<String, List<String>> listDataChild, Map<String, Price> places) {
         String beerName = beer.getBeerName();
         listDataHeader.add(beerName);
         List<String> locations = new ArrayList<>();
-        locations.add("location 1");
-        locations.add("location 2");
-
+        locations.add("Offering");
+        for(String key: places.keySet()){
+            int pricekr = places.get(key).getUnits();
+            String loc = key;
+            loc += " " + pricekr;
+            locations.add(loc);
+        }
         listDataChild.put(beerName, locations);
-
     }
 }
 

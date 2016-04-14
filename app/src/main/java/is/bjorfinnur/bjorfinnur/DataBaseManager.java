@@ -12,7 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class DataBaseManager extends SQLiteOpenHelper {
 
@@ -294,4 +297,31 @@ public class DataBaseManager extends SQLiteOpenHelper {
     }
 
 
+    public Map<String, Price> getBarsFromBeer(Beer beer) {
+        Map<String, Price> map = new TreeMap<>();
+        String query = "SELECT DISTINCT Bars.name as bar_name, BeersBars.price as beer_price FROM Beers,Bars,BeersBars WHERE Beers.id == BeersBars.beer_id AND Bars.id == BeersBars.bar_id AND Beers.name = ?";
+        String[] parameters = new String[]{beer.getBeerName()};
+
+        Cursor cursor = myDataBase.rawQuery(query, parameters);
+        String barName;
+        Price beerPrice = new Price();
+        if (cursor != null) {
+            cursor.moveToFirst();
+
+            for (int i = 0; i < cursor.getCount(); i++) {
+                barName = cursor.getString(cursor.getColumnIndex("bar_name"));
+                int pricekr = Integer.parseInt(cursor.getString(cursor.getColumnIndex("beer_price")));
+                beerPrice.setCurrency("ISK");
+                beerPrice.setUnits(pricekr);
+                beerPrice.setThousands(0);
+                map.put(barName, beerPrice);
+
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+
+
+        return map;
+    }
 }
