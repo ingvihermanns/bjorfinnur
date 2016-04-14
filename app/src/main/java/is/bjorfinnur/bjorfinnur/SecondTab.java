@@ -70,6 +70,11 @@ public class SecondTab extends Activity {
             // Use the provider to get the last known location
             myLocation = lm.getLastKnownLocation(provider);
         }
+        if(myLocation == null){
+            myLocation = new Location(""); //64.14
+            myLocation.setLatitude(64.14);
+            myLocation.setLongitude(-21.93);
+        }
 
         return myLocation;
     }
