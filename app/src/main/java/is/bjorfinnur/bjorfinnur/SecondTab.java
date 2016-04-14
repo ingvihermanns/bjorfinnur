@@ -49,7 +49,9 @@ public class SecondTab extends Activity {
 
     public float[] getDistance(List<GpsCoordinates> gpscordlist){
         float[] results = calculateDistance(gpscordlist);
-        Log.i("Grilli", "fongum hnitin: " + results);
+        for(int i = 0; i < results.length; i++){
+            Log.i("Grilli", "fongum hnitin: " + results[i]);
+        }
         return results;
     }
 
