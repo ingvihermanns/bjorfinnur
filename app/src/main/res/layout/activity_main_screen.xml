@@ -5,6 +5,15 @@
     <LinearLayout android:id="@+id/LinearLayout01"
         android:orientation="vertical" android:layout_height="fill_parent"
         android:layout_width="fill_parent">
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MapButton"
+            android:id="@+id/mapbutton"
+            android:layout_gravity="center_horizontal" />
+
         <SearchView
             android:id="@+id/search_view"
             android:layout_width="wrap_content"
