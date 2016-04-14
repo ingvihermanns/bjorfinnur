@@ -91,9 +91,9 @@ public class MainScreenActivity extends TabActivity {
         }
     }
 
-    private List<Gpscordinates> callMap(String query) {
+    private List<GpsCoordinates> callMap(String query) {
         Activity currentActivity = getCurrentActivity();
-        List<Gpscordinates> results = new ArrayList<Gpscordinates>();
+        List<GpsCoordinates> results = new ArrayList<GpsCoordinates>();
         if (currentActivity instanceof FirstTab) {
             Log.e("Info", "Query sent: " + query);
             results = ((FirstTab) currentActivity).populateMap(query);
@@ -106,13 +106,13 @@ public class MainScreenActivity extends TabActivity {
         MapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<Gpscordinates> gpscord = callMap(lastQuery);
+                List<GpsCoordinates> gpscord = callMap(lastQuery);
                 ArrayList<String> latitude = new ArrayList<String>();
                 ArrayList<String> longitude = new ArrayList<String>();
                 for (int i = 0; i < gpscord.size(); i++) {
-                    Gpscordinates gpscordinates = gpscord.get(i);
-                    latitude.add(gpscordinates.getLatitude() + "");
-                    longitude.add(gpscordinates.getLongtitude() + "");
+                    GpsCoordinates gpsCoordinates = gpscord.get(i);
+                    latitude.add(gpsCoordinates.getLatitude() + "");
+                    longitude.add(gpsCoordinates.getLongtitude() + "");
                 }
                 Intent i = new Intent(MainScreenActivity.this, MapsActivity.class);
                 i.putStringArrayListExtra("latitude",latitude);

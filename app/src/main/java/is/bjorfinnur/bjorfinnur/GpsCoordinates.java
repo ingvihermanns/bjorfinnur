@@ -3,12 +3,12 @@ package is.bjorfinnur.bjorfinnur;
 /**
  * Created by Eva Thor on 4/10/2016.
  */
-public class Gpscordinates {
+public class GpsCoordinates {
 
     private float latitude;
     private float longtitude;
 
-    public Gpscordinates(float latitude, float longtitude) {
+    public GpsCoordinates(float latitude, float longtitude) {
         this.latitude = latitude;
         this.longtitude = longtitude;
     }
