@@ -46,6 +46,9 @@ build/
 #NDK
 obj/
 
+settings.gradle
+.idea/gradle.xml
+.idea/misc.xml
 
 
 /*/out
