@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -139,6 +140,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
 
     public List<Beer> searchBeers(String searchString) {
+
         List<Beer> beerList = new ArrayList<>();
         String beerName;
         String manufacturer;
@@ -181,6 +183,8 @@ public class DataBaseManager extends SQLiteOpenHelper {
         String longitude;
 
         String query = "SELECT * FROM Bars WHERE name LIKE ? OR address LIKE ?";
+
+        Log.i("Grimbill", query);
 
         String[] parameters = new String[]{
                 "%" + searchString + "%",

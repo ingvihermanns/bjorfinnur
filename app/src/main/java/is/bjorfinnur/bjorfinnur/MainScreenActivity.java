@@ -23,7 +23,7 @@ public class MainScreenActivity extends TabActivity {
     private SearchView searchView;
     private String lastQuery = "";
     private Button searchButton;
-    private TabSpec firstTabSpec, thirdTabSpec;
+    private TabSpec firstTabSpec, secondTabSpec, thirdTabSpec;
     private TabHost tabHost;
     private ExpandableListView expandableListView;
     private ExpandableListAdapter listAdapter;
@@ -44,7 +44,7 @@ public class MainScreenActivity extends TabActivity {
 
         /** tid1 is firstTabSpec Id. Its used to access outside. */
         firstTabSpec = tabHost.newTabSpec("tid1");
-        TabSpec secondTabSpec = tabHost.newTabSpec("tid2");
+        secondTabSpec = tabHost.newTabSpec("tid2");
         thirdTabSpec = tabHost.newTabSpec("tid3");
 
         /** TabSpec setIndicator() is used to set name for the tab. */

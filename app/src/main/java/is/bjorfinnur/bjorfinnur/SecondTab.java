@@ -26,6 +26,9 @@ public class SecondTab extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        dataBaseManager = new DataBaseManager(this);
+        List<Beer> barList = dataBaseManager.searchBeers("");
+
 /* Second Tab Content */
         TextView textView = new TextView(this);
         textView.setText("Second Tab");
@@ -33,7 +36,7 @@ public class SecondTab extends Activity {
     }
 
     public void search(String query){
-        Log.e("Info", "Query recieved: " + query);
+        Log.i("Info", "Query recieved: " + query);
         List<Bar> barList = dataBaseManager.searchBars(query);
         //newBarList(barList);
     }
