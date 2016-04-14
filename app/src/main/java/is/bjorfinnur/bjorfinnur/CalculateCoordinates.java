@@ -10,19 +10,20 @@ import java.util.List;
  */
 public class CalculateCoordinates {
 
-    List<Gpscordinates> gpslist = new ArrayList<>();
+    List<GpsCoordinates> gpslist = new ArrayList<>();
 
-    public static float[] calculateDistance(List<Gpscordinates> gpslist) {
+    /*
+    public static float[] calculateDistance(List<GpsCoordinates> gpslist) {
 
         float[] results = new float[gpslist.size()];
 
-        Location mylocation = MapsActivity.getMyLocation();
+        Location mylocation = getMyLocation();
         Location loc1 = new Location("");
         loc1.setLatitude(mylocation.getLatitude());
         loc1.setLongitude(mylocation.getLongitude());
 
         for (int i = 0; i < gpslist.size(); i++) {
-            Gpscordinates gpscord = gpslist.get(i);
+            GpsCoordinates gpscord = gpslist.get(i);
             Location loc2 = new Location("");
             loc2.setLatitude(gpscord.getLatitude());
             loc2.setLongitude(gpscord.getLongtitude());
@@ -34,7 +35,7 @@ public class CalculateCoordinates {
 
     }
 
-
+    */
 
 
 }

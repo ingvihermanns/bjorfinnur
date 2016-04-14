@@ -66,7 +66,7 @@ public class MapsActivity extends FragmentActivity {
         }
     }
 
-    public static Location getMyLocation() {
+    public Location getMyLocation() {
         // Get location from GPS if it's available
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         Location myLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
