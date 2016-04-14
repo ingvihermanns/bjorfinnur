@@ -16,6 +16,7 @@ import java.util.List;
 
 public class DataBaseManager extends SQLiteOpenHelper {
 
+    private static DataBaseManager databaseManagerInstance;
     // Default system data path
     private final String dataBasePath;
     // Name of database to be used
@@ -280,6 +281,17 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
 
 
+
+    public static DataBaseManager getDatabaseManager(Context context) {
+        if(databaseManagerInstance == null){
+            initializeDatabaseManager(context);
+        }
+        return databaseManagerInstance;
+    }
+
+    private static void initializeDatabaseManager(Context context) {
+        databaseManagerInstance = new DataBaseManager(context);
+    }
 
 
 }

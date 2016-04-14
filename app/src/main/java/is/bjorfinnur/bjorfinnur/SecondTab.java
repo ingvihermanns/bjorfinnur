@@ -26,7 +26,7 @@ public class SecondTab extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        dataBaseManager = new DataBaseManager(this);
+        dataBaseManager = DataBaseManager.getDatabaseManager(this);
         List<Beer> barList = dataBaseManager.searchBeers("");
 
 /* Second Tab Content */
