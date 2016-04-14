@@ -1,16 +1,9 @@
 package is.bjorfinnur.bjorfinnur;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +16,7 @@ public class ThirdTab extends Activity {
     private ExpandableListAdapter listAdapter;
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listDataChild;
+    private DataBaseManager dataBaseManager;
 
     /** Called when the activity is first created. */
     @Override
@@ -30,23 +24,48 @@ public class ThirdTab extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_third_tab);
 
-        setUpData();
+        dataBaseManager = DataBaseManager.getDatabaseManager(this);
         expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
-        listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
 
         // setting list adapter
-        expandableListView.setAdapter(listAdapter);
+        refreshAdapter("");
     }
 
-    private void setUpData(){
+    public List<Beer> search(String query){
+        Log.e("Info", "Query recieved: " + query);
+        List<Beer> beerList = dataBaseManager.searchBeers(query);
+        return beerList;
+    }
+
+    private void refreshAdapter(String query){
+        setUpData(query);
+        setAdapter(new ExpandableListAdapter(this, listDataHeader, listDataChild));
+    }
+
+    private void setAdapter(ExpandableListAdapter adapter){
+        expandableListView.setAdapter(adapter);
+    }
+
+    private void setUpData(String query){
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
-        ArrayList<String> kari = new ArrayList<String>(Arrays.asList("You idiot.", "#REKT"));
-        ArrayList<String> arnar = new ArrayList<String>(Arrays.asList("Meistari.", "Haha"));
-        listDataHeader.add("Skilaboð til Kára!");
-        listDataHeader.add("Meistari!");
-        listDataChild.put(listDataHeader.get(0), kari);
-        listDataChild.put(listDataHeader.get(1), arnar);
+        List<Beer> beerList = search(query);
+        for(Beer beer: beerList){
+            addBeer(beer, listDataHeader, listDataChild);
+        }
+    }
+
+    private static void addBeer(Beer beer, List<String> listDataHeader, HashMap<String, List<String>> listDataChild) {
+        String beerName = beer.getBeerName();
+        listDataHeader.add(beerName);
+        List<String> locations = new ArrayList<>();
+        locations.add("location 1");
+        locations.add("location 2");
+
+        listDataChild.put(beerName, locations);
+
     }
 }
+
+

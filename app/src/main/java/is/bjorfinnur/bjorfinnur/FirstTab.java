@@ -24,7 +24,7 @@ public class FirstTab extends Activity {
 
         setContentView(R.layout.activity_first_tab);
 
-        dataBaseManager = new DataBaseManager(this);
+        dataBaseManager = DataBaseManager.getDatabaseManager(this);;
         List<Beer> beerList = dataBaseManager.searchBeers("");
 
         listView = (ListView) findViewById(R.id.listView);
