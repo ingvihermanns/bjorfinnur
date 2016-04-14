@@ -14,13 +14,20 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class SecondTab extends Activity {
     /** Called when the activity is first created. */
 
     private DataBaseManager dataBaseManager;
     ListView listView;
+    private float[] distance;
+    private String[] names;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +48,7 @@ public class SecondTab extends Activity {
         //newBarList(barList);
     }
 
+
     public List<GpsCoordinates> populateDistance(String query){
         List<GpsCoordinates> gpscordlist = dataBaseManager.getBarCoordinates(query);
         getDistance(gpscordlist);
@@ -52,6 +60,19 @@ public class SecondTab extends Activity {
         for(int i = 0; i < results.length; i++){
             Log.i("Grilli", "fongum hnitin: " + results[i]);
         }
+        distance = results;
+        return results;
+    }
+
+    public String[] getNames(String query){
+        ArrayList<String> namelist = dataBaseManager.getBarNames(query);
+        String[] results = new String[namelist.size()];
+        for(int i = 0; i<results.length; i++){
+            results[i] = namelist.get(i);
+            Log.i("Grilli", "fongum nafnid: " + results[i]);
+        }
+        names = results;
+        sort();
         return results;
     }
 
@@ -93,6 +114,26 @@ public class SecondTab extends Activity {
         }
 
         return results;
+
+    }
+
+    public void sort(){
+        Map<Float,String> byDist = new TreeMap<>();
+        Log.i("Grilli","dist: " + distance.length + " name: " + names.length);
+        for(int i=0;i<distance.length;i++) {
+            byDist.put(distance[i], names[i]);
+        }
+        byDist = MapUtil.sortByValue(byDist);
+        for(int i = 0;i<distance.length;i++){
+            //Log.i("Grilli", byDist.get(i));
+        }
+    }
+
+    public void sortHigh2Low(){
+
+    }
+
+    public void sortLow2High(){
 
     }
 

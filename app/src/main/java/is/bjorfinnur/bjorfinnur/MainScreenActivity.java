@@ -88,6 +88,7 @@ public class MainScreenActivity extends TabActivity {
             Log.e("Info", "fongum hnitin: " + query);
             ((SecondTab) currentActivity).search(query);
             ((SecondTab) currentActivity).populateDistance(query);
+            ((SecondTab) currentActivity).getNames(query);
         }
     }
 
@@ -101,12 +102,27 @@ public class MainScreenActivity extends TabActivity {
         return results;
     }
 
+    private ArrayList<String> mapCall(String query){
+        Activity currentActivity = getCurrentActivity();
+        ArrayList<String> results = new ArrayList<>();
+        if (currentActivity instanceof FirstTab) {
+            Log.e("Info", "Query sent: " + query);
+            results = ((FirstTab) currentActivity).populateBarNames(query);;
+        }
+        return results;
+    }
+
+
+
+
+
     private void setUpMapButton() {
         Button MapButton = (Button) findViewById(R.id.mapbutton);
         MapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 List<GpsCoordinates> gpscord = callMap(lastQuery);
+                ArrayList<String> names = mapCall(lastQuery);
                 ArrayList<String> latitude = new ArrayList<String>();
                 ArrayList<String> longitude = new ArrayList<String>();
                 for (int i = 0; i < gpscord.size(); i++) {
@@ -117,6 +133,7 @@ public class MainScreenActivity extends TabActivity {
                 Intent i = new Intent(MainScreenActivity.this, MapsActivity.class);
                 i.putStringArrayListExtra("latitude",latitude);
                 i.putStringArrayListExtra("longitude",longitude);
+                i.putStringArrayListExtra("barname",names);
                 startActivity(i);
             }
         });

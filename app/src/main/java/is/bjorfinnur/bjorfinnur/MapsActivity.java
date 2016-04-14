@@ -1,6 +1,8 @@
 package is.bjorfinnur.bjorfinnur;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Icon;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -9,6 +11,8 @@ import android.location.LocationManager;
 import android.provider.SyncStateContract;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.location.FusedLocationProviderApi;
@@ -16,6 +20,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -29,6 +35,7 @@ public class MapsActivity extends FragmentActivity {
     private GoogleMap mMap;
     private float[] latitude;
     private float[] longtitude;
+    private String[] names;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,12 +43,15 @@ public class MapsActivity extends FragmentActivity {
 
         ArrayList<String> lat = getIntent().getStringArrayListExtra("latitude");
         ArrayList<String> lon = getIntent().getStringArrayListExtra("longitude");
+        ArrayList<String> name = getIntent().getStringArrayListExtra("barname");
 
         latitude = new float[lat.size()];
         longtitude = new float[lon.size()];
+        names = new String[name.size()];
         for (int i = 0; i < latitude.length; i++) {
             latitude[i] = Float.parseFloat(lat.get(i));
             longtitude[i] = Float.parseFloat(lon.get(i));
+            names[i] = name.get(i);
         }
 
         setUpMapIfNeeded();
@@ -98,9 +108,10 @@ public class MapsActivity extends FragmentActivity {
             myLocation = new LatLng(location.getLatitude(),location.getLongitude());
         }
         //mMap.addMarker(new MarkerOptions().position(myLocation).title("Marker"));
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.bjorfinnur);
         for (int i = 0; i < latitude.length; i++) {
             mMap.addMarker(new MarkerOptions().position(
-                    new LatLng(latitude[i], longtitude[i])).title("Marker"));
+                    new LatLng(latitude[i], longtitude[i])).title("Marker").icon(icon).title(names[i]));
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));//Moves the camera to users current longitude and latitude
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,(float) 14));

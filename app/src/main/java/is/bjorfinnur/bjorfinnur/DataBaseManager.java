@@ -216,6 +216,38 @@ public class DataBaseManager extends SQLiteOpenHelper {
         return barList;
     }
 
+
+    public ArrayList<String> getBarNames(String searchString) {
+
+        ArrayList<String> barNames = new ArrayList<>();
+
+
+        String query = "SELECT DISTINCT Bars.name FROM Bars WHERE Bars.name LIKE ? OR Bars.address = ?";
+
+        String[] parameters = new String[]{
+                "%" + searchString + "%",
+                "%" + searchString + "%"
+        };
+
+        Cursor cursor = myDataBase.rawQuery(query, parameters);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+
+            for (int i = 0; i < cursor.getCount(); i++) {
+
+                String bname = cursor.getString(cursor.getColumnIndex("name"));
+                barNames.add(bname);
+
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+
+        return barNames;
+    }
+
+
     public List<GpsCoordinates> getBarCoordinates(String searchString) {
 
         List<GpsCoordinates> coordinatesList = new ArrayList<>();
@@ -282,7 +314,34 @@ public class DataBaseManager extends SQLiteOpenHelper {
         return coordinatesList;
     }
 
+    public ArrayList getBarName(String searchString) {
 
+        ArrayList barName = new ArrayList<>();
+
+        String query = "SELECT DISTINCT Bars.name FROM Beers,Bars,BeersBars WHERE Beers.id == BeersBars.beer_id AND Bars.id == BeersBars.bar_id AND Beers.name LIKE ? OR Beers.manufacturer LIKE ? OR Beers.type LIKE ?";
+
+        String[] parameters = new String[]{
+                "%" + searchString + "%",
+                "%" + searchString + "%",
+                "%" + searchString + "%"
+        };
+
+        Cursor cursor = myDataBase.rawQuery(query, parameters);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+
+            for (int i = 0; i < cursor.getCount(); i++) {
+
+                String name = cursor.getString(cursor.getColumnIndex("name"));
+                barName.add(name);
+
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+        return barName;
+    }
 
 
     public static DataBaseManager getDatabaseManager(Context context) {
@@ -304,11 +363,11 @@ public class DataBaseManager extends SQLiteOpenHelper {
 
         Cursor cursor = myDataBase.rawQuery(query, parameters);
         String barName;
-        Price beerPrice = new Price();
         if (cursor != null) {
             cursor.moveToFirst();
 
             for (int i = 0; i < cursor.getCount(); i++) {
+                Price beerPrice = new Price();
                 barName = cursor.getString(cursor.getColumnIndex("bar_name"));
                 int pricekr = Integer.parseInt(cursor.getString(cursor.getColumnIndex("beer_price")));
                 beerPrice.setCurrency("ISK");

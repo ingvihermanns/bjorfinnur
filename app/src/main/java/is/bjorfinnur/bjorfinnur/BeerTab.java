@@ -62,7 +62,6 @@ public class BeerTab extends Activity {
         String beerName = beer.getBeerName();
         listDataHeader.add(beerName);
         List<String> locations = new ArrayList<>();
-        locations.add("Offering");
         for(String key: places.keySet()){
             int pricekr = places.get(key).getUnits();
             String loc = key;
