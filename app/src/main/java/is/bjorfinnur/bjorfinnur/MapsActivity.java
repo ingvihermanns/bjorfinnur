@@ -66,7 +66,7 @@ public class MapsActivity extends FragmentActivity {
         }
     }
 
-    private Location getMyLocation() {
+    public static Location getMyLocation() {
         // Get location from GPS if it's available
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         Location myLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -85,6 +85,9 @@ public class MapsActivity extends FragmentActivity {
     }
 
 
+
+
+
     private void setUpMap() {
         mMap.setMyLocationEnabled(true);
         Location location = getMyLocation();
@@ -94,7 +97,7 @@ public class MapsActivity extends FragmentActivity {
         }else{
             myLocation = new LatLng(location.getLatitude(),location.getLongitude());
         }
-        mMap.addMarker(new MarkerOptions().position(myLocation).title("Marker"));
+        //mMap.addMarker(new MarkerOptions().position(myLocation).title("Marker"));
         for (int i = 0; i < latitude.length; i++) {
             mMap.addMarker(new MarkerOptions().position(
                     new LatLng(latitude[i], longtitude[i])).title("Marker"));
@@ -103,11 +106,12 @@ public class MapsActivity extends FragmentActivity {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,(float) 14));
 
 
-
     }
 
+
     /*
-    private float[] calculateDistance(List<GpsCoordiantes> GpsList) {
+
+    private static float[] calculateDistance(List<GpsCoordiantes> GpsList) {
 
         float[] results = new float[GpsList.size()];
 
