@@ -457,7 +457,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
         //        `beer_id`	INTEGER NOT NULL,
         //        `price`	INTEGER NOT NULL
         //        );
-        // TODO
+
 
         String query = "SELECT * FROM BeersBars";
         String[] parameters = new String[]{};
