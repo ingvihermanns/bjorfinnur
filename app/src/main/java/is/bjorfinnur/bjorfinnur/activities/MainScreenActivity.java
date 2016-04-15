@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import is.bjorfinnur.bjorfinnur.database.JsonDatabaseDownloader;
 import is.bjorfinnur.bjorfinnur.tabs.ExpandableListAdapter;
 import is.bjorfinnur.bjorfinnur.R;
 import is.bjorfinnur.bjorfinnur.tabs.BarTab;
@@ -38,11 +39,13 @@ public class MainScreenActivity extends TabActivity {
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listDataChild;
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
-        
+
         /** TabHost will have Tabs */
         tabHost = (TabHost) findViewById(android.R.id.tabhost);
 
@@ -72,6 +75,7 @@ public class MainScreenActivity extends TabActivity {
         setUpMapButton();
 
         searchView = (SearchView) findViewById(R.id.search_view);
+        searchView.clearFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -86,6 +90,9 @@ public class MainScreenActivity extends TabActivity {
             }
         });
 
+
+        // test downloading
+        new JsonDatabaseDownloader().execute("");
 
     }
 

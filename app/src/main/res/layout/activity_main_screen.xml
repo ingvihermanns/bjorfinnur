@@ -6,25 +6,60 @@
         android:orientation="vertical" android:layout_height="fill_parent"
         android:layout_width="fill_parent">
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MapButton"
-            android:id="@+id/mapbutton"
-            android:layout_gravity="center_horizontal" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <SearchView
-            android:id="@+id/search_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:addStatesFromChildren="false"
-            android:alwaysDrawnWithCache="false"
-            android:iconifiedByDefault="false" />
+            <SearchView
+                android:id="@+id/search_view"
+                android:layout_width="0px"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:addStatesFromChildren="false"
+                android:alwaysDrawnWithCache="false"
+                android:iconifiedByDefault="false" />
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Map"
+                android:id="@+id/mapbutton"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
 
         <TabWidget android:id="@android:id/tabs"
             android:layout_height="wrap_content" android:layout_width="fill_parent"></TabWidget>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Name"
+                android:id="@+id/sortButton1"
+                android:layout_gravity="center_horizontal" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Price"
+                android:id="@+id/sortButton2"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+
         <FrameLayout android:id="@android:id/tabcontent"
             android:layout_height="fill_parent" android:layout_width="fill_parent"></FrameLayout>
     </LinearLayout>
