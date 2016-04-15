@@ -22,9 +22,9 @@ import is.bjorfinnur.bjorfinnur.data.Bar;
 import is.bjorfinnur.bjorfinnur.data.Beer;
 import is.bjorfinnur.bjorfinnur.data.GpsCoordinates;
 
-public class DataBaseManager extends SQLiteOpenHelper {
+public class DatabaseManager extends SQLiteOpenHelper {
 
-    private static DataBaseManager databaseManagerInstance;
+    private static DatabaseManager databaseManagerInstance;
     // Default system data path
     private final String dataBasePath;
     // Name of database to be used
@@ -43,7 +43,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
      * Constructor
      * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
      */
-    private DataBaseManager(Context context) {
+    private DatabaseManager(Context context) {
         super(context, DB_NAME, null, 1);
 
         myContext = context;
@@ -326,9 +326,9 @@ public class DataBaseManager extends SQLiteOpenHelper {
         return coordinatesList;
     }
 
-    public ArrayList getBarName(String searchString) {
+    public ArrayList<String> getBarName(String searchString) {
 
-        ArrayList barName = new ArrayList<>();
+        ArrayList<String> barName = new ArrayList<>();
 
         String query = "SELECT DISTINCT Bars.name FROM Beers,Bars,BeersBars WHERE Beers.id == BeersBars.beer_id AND Bars.id == BeersBars.bar_id AND Beers.name LIKE ? OR Beers.manufacturer LIKE ? OR Beers.type LIKE ?";
 
@@ -356,7 +356,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
     }
 
 
-    public static DataBaseManager getDatabaseManager(Context context) {
+    public static DatabaseManager getInstance(Context context) {
         if(databaseManagerInstance == null){
             initializeDatabaseManager(context);
         }
@@ -364,7 +364,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
     }
 
     private static void initializeDatabaseManager(Context context) {
-        databaseManagerInstance = new DataBaseManager(context);
+        databaseManagerInstance = new DatabaseManager(context);
     }
 
     private void setUpMaps() {

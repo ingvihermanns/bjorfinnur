@@ -1,8 +1,10 @@
 package is.bjorfinnur.bjorfinnur.util;
 
-/**
- * Created by Eva Thor on 4/14/2016.
- */
+import android.content.Context;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
+
 import java.util.*;
 
 public class MapUtil
@@ -11,7 +13,7 @@ public class MapUtil
     sortByValue( Map<K, V> map )
     {
         List<Map.Entry<K, V>> list =
-                new LinkedList<Map.Entry<K, V>>( map.entrySet() );
+                new LinkedList<>( map.entrySet() );
         Collections.sort( list, new Comparator<Map.Entry<K, V>>()
         {
             public int compare( Map.Entry<K, V> o1, Map.Entry<K, V> o2 )
@@ -20,11 +22,34 @@ public class MapUtil
             }
         } );
 
-        Map<K, V> result = new LinkedHashMap<K, V>();
+        Map<K, V> result = new LinkedHashMap<>();
         for (Map.Entry<K, V> entry : list)
         {
             result.put( entry.getKey(), entry.getValue() );
         }
         return result;
+    }
+
+    public static Location getMyLocation(Context context){
+        // Get location from GPS if it's available
+        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        Location myLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        // Location wasn't found, check the next most accurate place for the current location
+        if (myLocation == null) {
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+            // Finds a provider that matches the criteria
+            String provider = lm.getBestProvider(criteria, true);
+            // Use the provider to get the last known location
+            myLocation = lm.getLastKnownLocation(provider);
+        }
+        if(myLocation == null){
+            myLocation = new Location(""); //64.14
+            myLocation.setLatitude(64.14);
+            myLocation.setLongitude(-21.93);
+        }
+
+        return myLocation;
     }
 }

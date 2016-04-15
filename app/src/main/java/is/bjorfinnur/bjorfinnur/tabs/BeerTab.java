@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import is.bjorfinnur.bjorfinnur.database.DataBaseManager;
+import is.bjorfinnur.bjorfinnur.database.DatabaseManager;
 import is.bjorfinnur.bjorfinnur.data.Price;
 import is.bjorfinnur.bjorfinnur.R;
 import is.bjorfinnur.bjorfinnur.data.Bar;
@@ -23,7 +23,7 @@ public class BeerTab extends Activity{
     private ExpandableListAdapter listAdapter;
     private List<String> listDataHeader;
     private Map<String, List<String>> listDataChild;
-    private DataBaseManager dataBaseManager;
+    private DatabaseManager databaseManager;
 
     /** Called when the activity is first created. */
     @Override
@@ -31,7 +31,7 @@ public class BeerTab extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expandable_list_view);
 
-        dataBaseManager = DataBaseManager.getDatabaseManager(this);
+        databaseManager = DatabaseManager.getInstance(this);
         expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
         // setting list adapter
         refreshAdapter("");
@@ -43,7 +43,7 @@ public class BeerTab extends Activity{
     }
 
     private List<Beer> searchForBeers(String query){
-        return dataBaseManager.searchBeers2(query);
+        return databaseManager.searchBeers2(query);
     }
 
     private void refreshAdapter(String query){
@@ -56,7 +56,7 @@ public class BeerTab extends Activity{
 
         List<Beer> beerList = searchForBeers(query);
         for(Beer beer: beerList){
-            List<Pair<Bar, Price>> bars = dataBaseManager.getBarsFromBeer(beer);
+            List<Pair<Bar, Price>> bars = databaseManager.getBarsFromBeer(beer);
             addBeerCard(beer, bars);
         }
     }

@@ -1,6 +1,7 @@
 package is.bjorfinnur.bjorfinnur.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.location.Address;
@@ -32,30 +33,38 @@ import java.util.List;
 
 import is.bjorfinnur.bjorfinnur.R;
 
-public class MapsActivity extends FragmentActivity {
+public class MapActivity extends FragmentActivity {
 
     private GoogleMap mMap;
-    private float[] latitude;
-    private float[] longtitude;
-    private String[] names;
+
+    private ArrayList<Float> latitudes;
+    private ArrayList<Float> longitudes;
+    private ArrayList<String> barNames;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        ArrayList<String> lat = getIntent().getStringArrayListExtra("latitude");
-        ArrayList<String> lon = getIntent().getStringArrayListExtra("longitude");
-        ArrayList<String> name = getIntent().getStringArrayListExtra("barname");
 
-        latitude = new float[lat.size()];
-        longtitude = new float[lon.size()];
-        names = new String[name.size()];
-        for (int i = 0; i < latitude.length; i++) {
-            latitude[i] = Float.parseFloat(lat.get(i));
-            longtitude[i] = Float.parseFloat(lon.get(i));
-            names[i] = name.get(i);
+        ArrayList<String> stringLatitudes = getIntent().getStringArrayListExtra("barLatitudes");
+        ArrayList<String> stringLongitudes = getIntent().getStringArrayListExtra("barLongitudes");
+        barNames = getIntent().getStringArrayListExtra("barNames");
+
+        latitudes = new ArrayList<>();
+        longitudes = new ArrayList<>();
+
+        for(String lat: stringLatitudes){
+            latitudes.add(Float.parseFloat(lat));
+        }
+        for(String lon: stringLongitudes){
+            longitudes.add(Float.parseFloat(lon));
         }
 
+        Log.e("Info", "Invoking map with:");
+        for(int i=0; i<barNames.size(); i++){
+            Log.e("Info", "BarName: " + barNames.get(i) + " Latidue: " + longitudes.get(i) + " Longitude: " + longitudes.get(i));
+        }
         setUpMapIfNeeded();
     }
 
@@ -108,6 +117,7 @@ public class MapsActivity extends FragmentActivity {
 
     private void setUpMap() {
         mMap.setMyLocationEnabled(true);
+
         Location location = getMyLocation();
         LatLng myLocation;
         if(location == null){
@@ -115,12 +125,17 @@ public class MapsActivity extends FragmentActivity {
         }else{
             myLocation = new LatLng(location.getLatitude(),location.getLongitude());
         }
-        //mMap.addMarker(new MarkerOptions().position(myLocation).title("Marker"));
+
 
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.bjorfinnur);
-        for (int i = 0; i < latitude.length; i++) {
-            mMap.addMarker(new MarkerOptions().position(
-                    new LatLng(latitude[i], longtitude[i])).title("Marker").icon(icon).title(names[i]));
+
+        for (int i = 0; i < barNames.size(); i++) {
+            String barName = barNames.get(i);
+            float latitude = latitudes.get(i);
+            float longitude = longitudes.get(i);
+            LatLng latlng = new LatLng(latitude, longitude);
+            MarkerOptions markerOptions = new MarkerOptions().position(latlng).title(barName).icon(icon);
+            mMap.addMarker(markerOptions);
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));//Moves the camera to users current longitude and latitude
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,(float) 14));
@@ -128,6 +143,13 @@ public class MapsActivity extends FragmentActivity {
 
     }
 
+    public static void launchIntent(Context context, ArrayList<String> barNames, ArrayList<String> barLatitudes, ArrayList<String> barLongitudes) {
+        Intent i = new Intent(context, MapActivity.class);
+        i.putStringArrayListExtra("barNames", barNames);
+        i.putStringArrayListExtra("barLatitudes", barLatitudes);
+        i.putStringArrayListExtra("barLongitudes", barLongitudes);
+        context.startActivity(i);
+    }
 
     /*
 

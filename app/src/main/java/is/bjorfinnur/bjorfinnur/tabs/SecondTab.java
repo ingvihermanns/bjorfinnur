@@ -18,14 +18,13 @@ import java.util.TreeMap;
 import is.bjorfinnur.bjorfinnur.data.Bar;
 import is.bjorfinnur.bjorfinnur.data.Beer;
 import is.bjorfinnur.bjorfinnur.data.GpsCoordinates;
-import is.bjorfinnur.bjorfinnur.database.DataBaseManager;
+import is.bjorfinnur.bjorfinnur.database.DatabaseManager;
 import is.bjorfinnur.bjorfinnur.util.MapUtil;
 
 public class SecondTab extends Activity {
     /** Called when the activity is first created. */
 
-    private DataBaseManager dataBaseManager;
-    ListView listView;
+    private DatabaseManager databaseManager;
     private float[] distance;
     private String[] names;
 
@@ -34,10 +33,10 @@ public class SecondTab extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        dataBaseManager = DataBaseManager.getDatabaseManager(this);
-        List<Beer> barList = dataBaseManager.searchBeers("");
+        databaseManager = DatabaseManager.getInstance(this);
+        List<Beer> barList = databaseManager.searchBeers("");
 
-/* Second Tab Content */
+        /* Second Tab Content */
         TextView textView = new TextView(this);
         textView.setText("Second Tab");
         setContentView(textView);
@@ -45,18 +44,18 @@ public class SecondTab extends Activity {
 
     public void search(String query){
         Log.i("Info", "Query recieved: " + query);
-        List<Bar> barList = dataBaseManager.searchBars(query);
+        List<Bar> barList = databaseManager.searchBars(query);
         //newBarList(barList);
     }
 
 
     public List<GpsCoordinates> populateDistance(String query){
-        List<GpsCoordinates> gpscordlist = dataBaseManager.getBarCoordinates(query);
+        List<GpsCoordinates> gpscordlist = databaseManager.getBarCoordinates(query);
         getDistance(gpscordlist);
         return gpscordlist;
     }
 
-    public float[] getDistance(List<GpsCoordinates> gpscordlist){
+    private float[] getDistance(List<GpsCoordinates> gpscordlist){
         float[] results = calculateDistance(gpscordlist);
         for(int i = 0; i < results.length; i++){
             Log.i("Grilli", "fongum hnitin: " + results[i]);
@@ -66,7 +65,7 @@ public class SecondTab extends Activity {
     }
 
     public String[] getNames(String query){
-        ArrayList<String> namelist = dataBaseManager.getBarNames(query);
+        ArrayList<String> namelist = databaseManager.getBarNames(query);
         String[] results = new String[namelist.size()];
         for(int i = 0; i<results.length; i++){
             results[i] = namelist.get(i);
@@ -78,34 +77,12 @@ public class SecondTab extends Activity {
     }
 
 
-    public Location getMyLocation() {
-        // Get location from GPS if it's available
-        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        Location myLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-        // Location wasn't found, check the next most accurate place for the current location
-        if (myLocation == null) {
-            Criteria criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-            // Finds a provider that matches the criteria
-            String provider = lm.getBestProvider(criteria, true);
-            // Use the provider to get the last known location
-            myLocation = lm.getLastKnownLocation(provider);
-        }
-        if(myLocation == null){
-            myLocation = new Location(""); //64.14
-            myLocation.setLatitude(64.14);
-            myLocation.setLongitude(-21.93);
-        }
-
-        return myLocation;
-    }
-
-    public float[] calculateDistance(List<GpsCoordinates> gpslist) {
+    private float[] calculateDistance(List<GpsCoordinates> gpslist) {
 
         float[] results = new float[gpslist.size()];
 
-        Location mylocation = getMyLocation();
+        Location mylocation = MapUtil.getMyLocation(this);
+
         Location loc1 = new Location("");
         loc1.setLatitude(mylocation.getLatitude());
         loc1.setLongitude(mylocation.getLongitude());
@@ -123,7 +100,7 @@ public class SecondTab extends Activity {
 
     }
 
-    public void sort(){
+    private void sort(){
         Map<Float,String> byDist = new TreeMap<>();
         Log.i("Grilli","dist: " + distance.length + " name: " + names.length);
         for(int i=0;i<distance.length;i++) {
@@ -134,7 +111,7 @@ public class SecondTab extends Activity {
             //Log.i("Grilli", byDist.get(i));
         }
     }
-
+/*
     public void sortHigh2Low(){
 
     }
@@ -142,5 +119,5 @@ public class SecondTab extends Activity {
     public void sortLow2High(){
 
     }
-
+*/
 }

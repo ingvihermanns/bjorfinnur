@@ -42,6 +42,17 @@ public class Bar implements Comparable<Bar>{
         return id;
     }
 
+    public String toString(){
+        String s = "";
+        s += "Bar: ";
+        s += "id: " + id;
+        s += " name: " + name;
+        s += " latitude: " + latitude;
+        s += " longitude: " + longitude;
+        s += " description: " + description + ".";
+        return s;
+    }
+
     @Override
     public int compareTo(Bar another) {
         return (new Integer(this.id)).compareTo(another.getId());

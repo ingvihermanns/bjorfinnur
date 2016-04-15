@@ -5,41 +5,32 @@ import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ExpandableListView;
 import android.widget.SearchView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
+import is.bjorfinnur.bjorfinnur.data.Bar;
+import is.bjorfinnur.bjorfinnur.data.Beer;
+import is.bjorfinnur.bjorfinnur.data.Price;
+import is.bjorfinnur.bjorfinnur.database.DatabaseManager;
 import is.bjorfinnur.bjorfinnur.database.JsonDatabaseDownloader;
-import is.bjorfinnur.bjorfinnur.tabs.ExpandableListAdapter;
 import is.bjorfinnur.bjorfinnur.R;
 import is.bjorfinnur.bjorfinnur.tabs.BarTab;
 import is.bjorfinnur.bjorfinnur.tabs.BeerTab;
-import is.bjorfinnur.bjorfinnur.data.GpsCoordinates;
 import is.bjorfinnur.bjorfinnur.tabs.FirstTab;
 import is.bjorfinnur.bjorfinnur.tabs.SecondTab;
 
 public class MainScreenActivity extends TabActivity {
-    private static final int FIRST_TAB_POSITION = 0;
-    private static final int SECOND_TAB_POSITION = 1;
-    /** Called when the activity is first created. */
-    private SearchView searchView;
-    private String lastQuery = "";
-    private Button searchButton;
-    private TabSpec firstTabSpec, secondTabSpec, beerTabSpec, barTabSpec;
-    private TabHost tabHost;
-    private ExpandableListView expandableListView;
-    private ExpandableListAdapter listAdapter;
-    private List<String> listDataHeader;
-    private HashMap<String, List<String>> listDataChild;
 
-
+    private String mostRecentQuery = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,39 +38,40 @@ public class MainScreenActivity extends TabActivity {
         setContentView(R.layout.activity_main_screen);
 
         /** TabHost will have Tabs */
-        tabHost = (TabHost) findViewById(android.R.id.tabhost);
+        TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
 
         /** TabSpec used to create a new tab.
          * By using TabSpec only we can able to setContent to the tab.
          * By using TabSpec setIndicator() we can set name to tab. */
 
         /** tid1 is firstTabSpec Id. Its used to access outside. */
-        firstTabSpec = tabHost.newTabSpec("tid1");
-        secondTabSpec = tabHost.newTabSpec("tid2");
-        beerTabSpec = tabHost.newTabSpec("tid3");
-        barTabSpec = tabHost.newTabSpec("tid4");
+        //TabSpec firstTabSpec = tabHost.newTabSpec("tid1");
+        TabSpec secondTabSpec = tabHost.newTabSpec("tid2");
+        TabSpec beerTabSpec = tabHost.newTabSpec("tid3");
+        TabSpec barTabSpec = tabHost.newTabSpec("tid4");
 
         /** TabSpec setIndicator() is used to set name for the tab. */
         /** TabSpec setContent() is used to set content for a particular tab. */
-        firstTabSpec.setIndicator("old f").setContent(new Intent(this,FirstTab.class));
+        //firstTabSpec.setIndicator("old f").setContent(new Intent(this,FirstTab.class));
         secondTabSpec.setIndicator("old s").setContent(new Intent(this, SecondTab.class));
         beerTabSpec.setIndicator("Beers").setContent(new Intent(this, BeerTab.class));
         barTabSpec.setIndicator("Bars").setContent(new Intent(this, BarTab.class));
 
         /** Add tabSpec to the TabHost to display. */
-        tabHost.addTab(firstTabSpec);
+        //tabHost.addTab(firstTabSpec);
         tabHost.addTab(secondTabSpec);
         tabHost.addTab(beerTabSpec);
         tabHost.addTab(barTabSpec);
 
         setUpMapButton();
 
-        searchView = (SearchView) findViewById(R.id.search_view);
+        /* Called when the activity is first created. */
+        SearchView searchView = (SearchView) findViewById(R.id.search_view);
         searchView.clearFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                lastQuery = query;
+                mostRecentQuery = query;
                 MainScreenActivity.this.callSearch(query);
                 return true;
             }
@@ -89,7 +81,6 @@ public class MainScreenActivity extends TabActivity {
                 return true;
             }
         });
-
 
         // test downloading
         new JsonDatabaseDownloader().execute("");
@@ -115,11 +106,10 @@ public class MainScreenActivity extends TabActivity {
         }
     }
 
-    private List<GpsCoordinates> callMap(String query) {
+    /*private List<GpsCoordinates> callMap(String query) {
         Activity currentActivity = getCurrentActivity();
-        List<GpsCoordinates> results = new ArrayList<GpsCoordinates>();
+        List<GpsCoordinates> results = new ArrayList<>();
         if (currentActivity instanceof FirstTab) {
-            Log.e("Info", "Query sent: " + query);
             results = ((FirstTab) currentActivity).populateMap(query);
         }
         return results;
@@ -129,35 +119,47 @@ public class MainScreenActivity extends TabActivity {
         Activity currentActivity = getCurrentActivity();
         ArrayList<String> results = new ArrayList<>();
         if (currentActivity instanceof FirstTab) {
-            Log.e("Info", "Query sent: " + query);
             results = ((FirstTab) currentActivity).populateBarNames(query);;
         }
         return results;
-    }
-
-
-
+    }*/
 
 
     private void setUpMapButton() {
         Button MapButton = (Button) findViewById(R.id.mapbutton);
+
         MapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<GpsCoordinates> gpscord = callMap(lastQuery);
-                ArrayList<String> names = mapCall(lastQuery);
-                ArrayList<String> latitude = new ArrayList<String>();
-                ArrayList<String> longitude = new ArrayList<String>();
-                for (int i = 0; i < gpscord.size(); i++) {
-                    GpsCoordinates gpsCoordinates = gpscord.get(i);
-                    latitude.add(gpsCoordinates.getLatitude() + "");
-                    longitude.add(gpsCoordinates.getLongtitude() + "");
+                List<Bar> bars =  getBarNames();
+                ArrayList<String> barNames = new ArrayList<>();
+                ArrayList<String> barLatitudes = new ArrayList<>();
+                ArrayList<String> barLongitudes = new ArrayList<>();
+                for(Bar bar: bars){
+                    barNames.add(bar.getName());
+                    barLatitudes.add(bar.getLatitude());
+                    barLongitudes.add(bar.getLongitude());
                 }
-                Intent i = new Intent(MainScreenActivity.this, MapsActivity.class);
-                i.putStringArrayListExtra("latitude",latitude);
-                i.putStringArrayListExtra("longitude",longitude);
-                i.putStringArrayListExtra("barname",names);
-                startActivity(i);
+                MapActivity.launchIntent(MainScreenActivity.this, barNames, barLatitudes, barLongitudes);
+            }
+
+            private List<Bar> getBarNames() {
+                DatabaseManager databaseManager = DatabaseManager.getInstance(MainScreenActivity.this);
+                Activity currentActivity = getCurrentActivity();
+                List<Bar> barList = new ArrayList<>();
+                if (currentActivity instanceof BeerTab) {
+                    List<Beer> beers = databaseManager.searchBeers2(mostRecentQuery);
+                    Set<Bar> bars = new TreeSet<>();
+                    for(Beer beer: beers){
+                        for(Pair<Bar, Price> pair: databaseManager.getBarsFromBeer(beer)){
+                            bars.add(pair.first);
+                        }
+                    }
+                    barList.addAll(bars);
+                } else if (currentActivity instanceof BarTab) {
+                    barList.addAll(databaseManager.searchBars2(mostRecentQuery));
+                }
+                return barList;
             }
         });
     }

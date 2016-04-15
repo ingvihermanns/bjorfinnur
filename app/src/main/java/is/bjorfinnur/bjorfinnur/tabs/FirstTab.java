@@ -17,11 +17,11 @@ import java.util.List;
 import is.bjorfinnur.bjorfinnur.R;
 import is.bjorfinnur.bjorfinnur.data.Beer;
 import is.bjorfinnur.bjorfinnur.data.GpsCoordinates;
-import is.bjorfinnur.bjorfinnur.database.DataBaseManager;
+import is.bjorfinnur.bjorfinnur.database.DatabaseManager;
 
 public class FirstTab extends Activity {
     /** Called when the activity is first created. */
-    private DataBaseManager dataBaseManager;
+    private DatabaseManager databaseManager;
     ListView listView;
 
     @Override
@@ -30,8 +30,8 @@ public class FirstTab extends Activity {
 
         setContentView(R.layout.activity_first_tab);
 
-        dataBaseManager = DataBaseManager.getDatabaseManager(this);;
-        List<Beer> beerList = dataBaseManager.searchBeers("");
+        databaseManager = DatabaseManager.getInstance(this);
+        List<Beer> beerList = databaseManager.searchBeers("");
 
         listView = (ListView) findViewById(R.id.listView);
         setAdapter(new BeerListArrayAdapter(this, R.layout.beer_list_row, beerList));
@@ -41,19 +41,19 @@ public class FirstTab extends Activity {
 
     public void search(String query){
         Log.e("Info", "Query recieved: " + query);
-        List<Beer> beerList = dataBaseManager.searchBeers(query);
+        List<Beer> beerList = databaseManager.searchBeers(query);
         newBeerList(beerList);
     }
 
-    public List<GpsCoordinates> populateMap(String query){
-        List<GpsCoordinates> gpscordList = dataBaseManager.getBeerCoordinates(query);
+    /*public List<GpsCoordinates> populateMap(String query){
+        List<GpsCoordinates> gpscordList = databaseManager.getBeerCoordinates(query);
         return gpscordList;
-    }
+    }*/
 
-    public ArrayList<String> populateBarNames(String query){
-        ArrayList<String> barNames = dataBaseManager.getBarName(query);
+  /*  public ArrayList<String> populateBarNames(String query){
+        ArrayList<String> barNames = databaseManager.getBarName(query);
         return barNames;
-    }
+    }*/
 
     private void newBeerList(List<Beer> beerList){
         setAdapter(new BeerListArrayAdapter(this, R.layout.beer_list_row, beerList));
@@ -63,9 +63,9 @@ public class FirstTab extends Activity {
         listView.setAdapter(adapter);
     }
 
-    private void resetListView(){
+/*    private void resetListView(){
         listView.deferNotifyDataSetChanged();
-    }
+    }*/
 
     public class BeerListArrayAdapter extends ArrayAdapter<Beer> {
         private int resource;
