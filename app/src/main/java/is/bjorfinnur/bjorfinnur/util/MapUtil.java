@@ -1,4 +1,4 @@
-package is.bjorfinnur.bjorfinnur;
+package is.bjorfinnur.bjorfinnur.util;
 
 /**
  * Created by Eva Thor on 4/14/2016.

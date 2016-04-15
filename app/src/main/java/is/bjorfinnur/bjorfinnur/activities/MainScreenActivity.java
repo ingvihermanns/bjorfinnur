@@ -1,4 +1,4 @@
-package is.bjorfinnur.bjorfinnur;
+package is.bjorfinnur.bjorfinnur.activities;
 
 import android.app.Activity;
 import android.app.TabActivity;
@@ -16,6 +16,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import is.bjorfinnur.bjorfinnur.tabs.ExpandableListAdapter;
+import is.bjorfinnur.bjorfinnur.R;
+import is.bjorfinnur.bjorfinnur.tabs.BarTab;
+import is.bjorfinnur.bjorfinnur.tabs.BeerTab;
+import is.bjorfinnur.bjorfinnur.data.GpsCoordinates;
+import is.bjorfinnur.bjorfinnur.tabs.FirstTab;
+import is.bjorfinnur.bjorfinnur.tabs.SecondTab;
+
 public class MainScreenActivity extends TabActivity {
     private static final int FIRST_TAB_POSITION = 0;
     private static final int SECOND_TAB_POSITION = 1;
@@ -23,7 +31,7 @@ public class MainScreenActivity extends TabActivity {
     private SearchView searchView;
     private String lastQuery = "";
     private Button searchButton;
-    private TabSpec firstTabSpec, secondTabSpec, thirdTabSpec;
+    private TabSpec firstTabSpec, secondTabSpec, beerTabSpec, barTabSpec;
     private TabHost tabHost;
     private ExpandableListView expandableListView;
     private ExpandableListAdapter listAdapter;
@@ -45,18 +53,21 @@ public class MainScreenActivity extends TabActivity {
         /** tid1 is firstTabSpec Id. Its used to access outside. */
         firstTabSpec = tabHost.newTabSpec("tid1");
         secondTabSpec = tabHost.newTabSpec("tid2");
-        thirdTabSpec = tabHost.newTabSpec("tid3");
+        beerTabSpec = tabHost.newTabSpec("tid3");
+        barTabSpec = tabHost.newTabSpec("tid4");
 
         /** TabSpec setIndicator() is used to set name for the tab. */
         /** TabSpec setContent() is used to set content for a particular tab. */
-        firstTabSpec.setIndicator("Bjórar").setContent(new Intent(this,FirstTab.class));
-        secondTabSpec.setIndicator("Staðir").setContent(new Intent(this, SecondTab.class));
-        thirdTabSpec.setIndicator("Test").setContent(new Intent(this, BeerTab.class));
+        firstTabSpec.setIndicator("old f").setContent(new Intent(this,FirstTab.class));
+        secondTabSpec.setIndicator("old s").setContent(new Intent(this, SecondTab.class));
+        beerTabSpec.setIndicator("Beers").setContent(new Intent(this, BeerTab.class));
+        barTabSpec.setIndicator("Bars").setContent(new Intent(this, BarTab.class));
 
         /** Add tabSpec to the TabHost to display. */
         tabHost.addTab(firstTabSpec);
         tabHost.addTab(secondTabSpec);
-        tabHost.addTab(thirdTabSpec);
+        tabHost.addTab(beerTabSpec);
+        tabHost.addTab(barTabSpec);
 
         setUpMapButton();
 
@@ -83,8 +94,13 @@ public class MainScreenActivity extends TabActivity {
         if (currentActivity instanceof FirstTab) {
             Log.e("Info", "Query sent: " + query);
             ((FirstTab) currentActivity).search(query);
-        }
-        else if(currentActivity instanceof SecondTab){
+        } else if (currentActivity instanceof BeerTab) {
+            Log.e("Info", "Query sent: " + query);
+            ((BeerTab) currentActivity).search(query);
+        } else if (currentActivity instanceof BarTab) {
+            Log.e("Info", "Query sent: " + query);
+            ((BarTab) currentActivity).search(query);
+        } else if (currentActivity instanceof SecondTab) {
             Log.e("Info", "fongum hnitin: " + query);
             ((SecondTab) currentActivity).search(query);
             ((SecondTab) currentActivity).populateDistance(query);

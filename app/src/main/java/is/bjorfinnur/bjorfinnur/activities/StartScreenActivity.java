@@ -1,11 +1,12 @@
-package is.bjorfinnur.bjorfinnur;
+package is.bjorfinnur.bjorfinnur.activities;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
+
+import is.bjorfinnur.bjorfinnur.R;
 
 public class StartScreenActivity extends AppCompatActivity {
 

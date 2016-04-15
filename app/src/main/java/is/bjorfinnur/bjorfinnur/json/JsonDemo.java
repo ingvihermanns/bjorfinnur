@@ -1,4 +1,4 @@
-package is.bjorfinnur.bjorfinnur;
+package is.bjorfinnur.bjorfinnur.json;
 
 import android.util.Log;
 

@@ -1,4 +1,4 @@
-package is.bjorfinnur.bjorfinnur;
+package is.bjorfinnur.bjorfinnur.tabs;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,6 +13,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import is.bjorfinnur.bjorfinnur.R;
+import is.bjorfinnur.bjorfinnur.data.Beer;
+import is.bjorfinnur.bjorfinnur.data.GpsCoordinates;
+import is.bjorfinnur.bjorfinnur.database.DataBaseManager;
 
 public class FirstTab extends Activity {
     /** Called when the activity is first created. */
@@ -79,7 +84,7 @@ public class FirstTab extends Activity {
             convertView = inflater.inflate(resource, null);
             Beer beer = getItem( position );
             TextView beerName = (TextView) convertView.findViewById(R.id.beerName);
-            beerName.setText(beer.getBeerName());
+            beerName.setText(beer.getName());
             TextView beerType = (TextView) convertView.findViewById(R.id.beerType);
             beerType.setText(beer.getType());
             TextView beerManufactorer = (TextView) convertView.findViewById(R.id.beerManufactorer);

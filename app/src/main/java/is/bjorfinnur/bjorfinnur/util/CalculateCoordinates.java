@@ -1,9 +1,9 @@
-package is.bjorfinnur.bjorfinnur;
-
-import android.location.Location;
+package is.bjorfinnur.bjorfinnur.util;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import is.bjorfinnur.bjorfinnur.data.GpsCoordinates;
 
 /**
  * Created by Eva Thor on 4/14/2016.

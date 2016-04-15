@@ -3,11 +3,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:background="#f4f4f4" >
+    android:background="#f4f4f4">
 
     <ExpandableListView
         android:id="@+id/expandableListView"
         android:layout_height="match_parent"
-        android:layout_width="match_parent"/>
+        android:layout_width="match_parent"
+        android:childDivider="#d8d8d8"/>
 
 </LinearLayout>

@@ -1,4 +1,4 @@
-package is.bjorfinnur.bjorfinnur;
+package is.bjorfinnur.bjorfinnur.database;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -6,16 +6,21 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.util.Pair;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import is.bjorfinnur.bjorfinnur.data.Price;
+import is.bjorfinnur.bjorfinnur.data.Bar;
+import is.bjorfinnur.bjorfinnur.data.Beer;
+import is.bjorfinnur.bjorfinnur.data.GpsCoordinates;
 
 public class DataBaseManager extends SQLiteOpenHelper {
 
@@ -25,15 +30,20 @@ public class DataBaseManager extends SQLiteOpenHelper {
     // Name of database to be used
     private static final String DB_NAME = "BeerFinder.db";
 
-    private SQLiteDatabase myDataBase;
+    private SQLiteDatabase myDatabase;
 
     private final Context myContext;
+
+    private Map<Beer, List<Pair<Bar, Price>>> beerMap = new TreeMap<>();
+    private Map<Bar, List<Pair<Beer, Price>>> barMap = new TreeMap<>();
+    private Map<Integer, Beer> beerIds = new TreeMap<>();
+    private Map<Integer, Bar> barIds = new TreeMap<>();
 
     /**
      * Constructor
      * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
      */
-    public DataBaseManager(Context context) {
+    private DataBaseManager(Context context) {
         super(context, DB_NAME, null, 1);
 
         myContext = context;
@@ -50,6 +60,8 @@ public class DataBaseManager extends SQLiteOpenHelper {
         } catch (Exception e) {
             throw new Error("Unable to open database");
         }
+
+        setUpMaps();
     }
 
 
@@ -125,14 +137,14 @@ public class DataBaseManager extends SQLiteOpenHelper {
     private void openDataBase() {
         //Open the database
         String myPath = dataBasePath + DB_NAME;
-        myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+        myDatabase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
 
     }
 
     @Override
     public synchronized void close() {
-        if (myDataBase != null)
-            myDataBase.close();
+        if (myDatabase != null)
+            myDatabase.close();
         super.close();
     }
 
@@ -158,7 +170,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 "%" + searchString + "%"
         };
 
-        Cursor cursor = myDataBase.rawQuery(query, parameters);
+        Cursor cursor = myDatabase.rawQuery(query, parameters);
 
         if (cursor != null) {
             cursor.moveToFirst();
@@ -168,7 +180,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 manufacturer = cursor.getString(cursor.getColumnIndex("manufacturer"));
                 type = cursor.getString(cursor.getColumnIndex("type"));
 
-                beerList.add(new Beer(beerName, manufacturer, type));
+                beerList.add(new Beer(0, beerName, manufacturer, type, ""));
 
                 cursor.moveToNext();
             }
@@ -195,7 +207,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 "%" + searchString + "%"
         };
 
-        Cursor cursor = myDataBase.rawQuery(query, parameters);
+        Cursor cursor = myDatabase.rawQuery(query, parameters);
 
         if (cursor != null) {
             cursor.moveToFirst();
@@ -207,7 +219,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 latitude = cursor.getString(cursor.getColumnIndex("latitude"));
                 longitude = cursor.getString(cursor.getColumnIndex("longitude"));
 
-                barList.add(new Bar(barName, address, description, latitude, longitude));
+                barList.add(new Bar(0, barName, address, description, latitude, longitude));
 
                 cursor.moveToNext();
             }
@@ -229,7 +241,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 "%" + searchString + "%"
         };
 
-        Cursor cursor = myDataBase.rawQuery(query, parameters);
+        Cursor cursor = myDatabase.rawQuery(query, parameters);
 
         if (cursor != null) {
             cursor.moveToFirst();
@@ -262,7 +274,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 "%" + searchString + "%"
         };
 
-        Cursor cursor = myDataBase.rawQuery(query, parameters);
+        Cursor cursor = myDatabase.rawQuery(query, parameters);
 
         if (cursor != null) {
             cursor.moveToFirst();
@@ -296,7 +308,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 "%" + searchString + "%"
         };
 
-        Cursor cursor = myDataBase.rawQuery(query, parameters);
+        Cursor cursor = myDatabase.rawQuery(query, parameters);
 
         if (cursor != null) {
             cursor.moveToFirst();
@@ -326,7 +338,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 "%" + searchString + "%"
         };
 
-        Cursor cursor = myDataBase.rawQuery(query, parameters);
+        Cursor cursor = myDatabase.rawQuery(query, parameters);
 
         if (cursor != null) {
             cursor.moveToFirst();
@@ -355,32 +367,184 @@ public class DataBaseManager extends SQLiteOpenHelper {
         databaseManagerInstance = new DataBaseManager(context);
     }
 
+    private void setUpMaps() {
+        addBeersToBeerMap();
+        addBarsToBarMap();
+        addBeerBarTableToMaps();
+    }
 
-    public Map<String, Price> getBarsFromBeer(Beer beer) {
-        Map<String, Price> map = new TreeMap<>();
-        String query = "SELECT DISTINCT Bars.name as bar_name, BeersBars.price as beer_price FROM Beers,Bars,BeersBars WHERE Beers.id == BeersBars.beer_id AND Bars.id == BeersBars.bar_id AND Beers.name = ?";
-        String[] parameters = new String[]{beer.getBeerName()};
+    private void addBarsToBarMap() {
 
-        Cursor cursor = myDataBase.rawQuery(query, parameters);
-        String barName;
-        if (cursor != null) {
-            cursor.moveToFirst();
+        // Table schema:
+        //        CREATE TABLE "Bars" (
+        //        `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        //        `name`	TEXT NOT NULL UNIQUE,
+        //        `address`	TEXT NOT NULL,
+        //        `latitude`	TEXT NOT NULL,
+        //        `longitude`	TEXT NOT NULL,
+        //        `description`	TEXT NOT NULL
+        //        );
 
-            for (int i = 0; i < cursor.getCount(); i++) {
-                Price beerPrice = new Price();
-                barName = cursor.getString(cursor.getColumnIndex("bar_name"));
-                int pricekr = Integer.parseInt(cursor.getString(cursor.getColumnIndex("beer_price")));
-                beerPrice.setCurrency("ISK");
-                beerPrice.setUnits(pricekr);
-                beerPrice.setThousands(0);
-                map.put(barName, beerPrice);
-
-                cursor.moveToNext();
+        String query = "SELECT * FROM Bars";
+        String[] parameters = new String[]{};
+        Cursor cursor = myDatabase.rawQuery(query, parameters);
+        try {
+            for(String col: cursor.getColumnNames()){
+                Log.i("Info", "Cols in bars " + col);
             }
+            Log.i("Info: ", "Rowcount " + cursor.getCount());
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndex("id"));
+                String name = cursor.getString(cursor.getColumnIndex("name"));
+                String address = cursor.getString(cursor.getColumnIndex("address"));
+                String latitude = cursor.getString(cursor.getColumnIndex("latitude"));
+                String longitude = cursor.getString(cursor.getColumnIndex("longitude"));
+                String description = cursor.getString(cursor.getColumnIndex("description"));
+                Bar bar = new Bar(id, name, address, latitude, longitude, description);
+                List<Pair<Beer, Price>> list = new ArrayList<>();
+                barMap.put(bar, list);
+                barIds.put(bar.getId(), bar);
+            }
+        } finally {
             cursor.close();
         }
 
-
-        return map;
     }
+
+    private void addBeersToBeerMap() {
+
+
+        // Table schema:
+        //        CREATE TABLE "Beers" (
+        //        `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        //        `name`	TEXT NOT NULL UNIQUE,
+        //        `manufacturer`	TEXT NOT NULL,
+        //        `type`	TEXT NOT NULL,
+        //        `description`	TEXT NOT NULL
+        //        );
+
+        String query = "SELECT * FROM Beers";
+        String[] parameters = new String[]{};
+        Cursor cursor = myDatabase.rawQuery(query, parameters);
+        try {
+            for(String col: cursor.getColumnNames()){
+                Log.i("Info", "Cols in beers " + col);
+            }
+            Log.i("Info/Rowcount: ", "" + cursor.getCount());
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndex("id"));
+                String name = cursor.getString(cursor.getColumnIndex("name"));
+                String manufactorer = cursor.getString(cursor.getColumnIndex("manufacturer"));
+                String type = cursor.getString(cursor.getColumnIndex("type"));
+                String description = cursor.getString(cursor.getColumnIndex("description"));
+                Beer beer = new Beer(id, name, manufactorer, type, description);
+                List<Pair<Bar, Price>> list = new ArrayList<>();
+                beerMap.put(beer, list);
+                beerIds.put(beer.getId(), beer);
+            }
+        } finally {
+            cursor.close();
+        }
+
+    }
+
+    private void addBeerBarTableToMaps() {
+
+        // Table schema:
+        //        CREATE TABLE "BeersBars" (
+        //        `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        //        `bar_id`	INTEGER NOT NULL,
+        //        `beer_id`	INTEGER NOT NULL,
+        //        `price`	INTEGER NOT NULL
+        //        );
+        // TODO
+
+        String query = "SELECT * FROM BeersBars";
+        String[] parameters = new String[]{};
+        Cursor cursor = myDatabase.rawQuery(query, parameters);
+        try {
+            for(String col: cursor.getColumnNames()){
+                Log.i("Info", "Cols in BeersBars " + col);
+            }
+            Log.i("Info/BeersBars: ", "" + cursor.getCount());
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndex("id"));
+                int bar_id = cursor.getInt(cursor.getColumnIndex("bar_id"));
+                int beer_id = cursor.getInt(cursor.getColumnIndex("beer_id"));
+                int pricekr = cursor.getInt(cursor.getColumnIndex("price"));
+                Price price = new Price("ISK", pricekr);
+                Bar bar = barIds.get(bar_id);
+                Beer beer = beerIds.get(beer_id);
+                addBeerToBarMap(beer, bar, price);
+                addBarToBeerMap(bar, beer, price);
+            }
+        } finally {
+            cursor.close();
+        }
+    }
+
+    private void addBeerToBarMap(Beer beer, Bar bar, Price price) {
+        barMap.get(bar).add(new Pair<>(beer, price));
+    }
+
+    private void addBarToBeerMap(Bar bar, Beer beer, Price price) {
+        beerMap.get(beer).add(new Pair<>(bar, price));
+    }
+
+
+    public List<Pair<Bar, Price>> getBarsFromBeer(Beer beer) {
+        return beerMap.get(beer);
+    }
+
+
+    public List<Pair<Beer,Price>> getBeersFromBar(Bar bar) {
+        return barMap.get(bar);
+    }
+
+    public List<Beer> searchBeers2(String searchString) {
+        String query = "SELECT id FROM Beers WHERE name LIKE ? OR manufacturer LIKE ? OR type LIKE ?";
+
+        String[] parameters = new String[]{
+            "%" + searchString + "%",
+            "%" + searchString + "%",
+            "%" + searchString + "%"
+        };
+
+        List<Beer> beers = new ArrayList<>();
+        Cursor cursor = myDatabase.rawQuery(query, parameters);
+        try {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndex("id"));
+                Beer beer = beerIds.get(id);
+                beers.add(beer);
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return beers;
+    }
+
+    public List<Bar> searchBars2(String searchString) {
+        String query = "SELECT id FROM Bars WHERE name LIKE ?";
+
+        String[] parameters = new String[]{
+            "%" + searchString + "%"
+        };
+
+        List<Bar> bars = new ArrayList<>();
+        Cursor cursor = myDatabase.rawQuery(query, parameters);
+        try {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndex("id"));
+                Bar bar = barIds.get(id);
+                bars.add(bar);
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return bars;
+    }
+
 }

@@ -1,4 +1,4 @@
-package is.bjorfinnur.bjorfinnur;
+package is.bjorfinnur.bjorfinnur.activities;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -29,6 +29,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import is.bjorfinnur.bjorfinnur.R;
 
 public class MapsActivity extends FragmentActivity {
 
@@ -114,6 +116,7 @@ public class MapsActivity extends FragmentActivity {
             myLocation = new LatLng(location.getLatitude(),location.getLongitude());
         }
         //mMap.addMarker(new MarkerOptions().position(myLocation).title("Marker"));
+
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.bjorfinnur);
         for (int i = 0; i < latitude.length; i++) {
             mMap.addMarker(new MarkerOptions().position(
