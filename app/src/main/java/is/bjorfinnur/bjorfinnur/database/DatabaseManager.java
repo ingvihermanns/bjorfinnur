@@ -1,5 +1,6 @@
 package is.bjorfinnur.bjorfinnur.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,14 +9,27 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.util.Pair;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.json.simple.parser.JSONParser;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
 
 import is.bjorfinnur.bjorfinnur.data.Price;
 import is.bjorfinnur.bjorfinnur.data.Bar;
@@ -61,6 +75,19 @@ public class DatabaseManager extends SQLiteOpenHelper {
             throw new Error("Unable to open database");
         }
 
+
+        JsonDatabaseDownloader testDownloader = new JsonDatabaseDownloader();
+        JSONObject testObject = null;
+        try {
+            testObject = testDownloader.execute("").get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        //testAdd(testObject);
+
         setUpMaps();
     }
 
@@ -73,7 +100,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (!dbExist) {
             //By calling this method and empty database will be created into the default system path
             //of your application so we are gonna be able to overwrite that database with our database.
-            this.getReadableDatabase();
+            this.getWritableDatabase();
 
             try {
                 copyDataBase();
@@ -92,7 +119,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         try {
             String myPath = dataBasePath + DB_NAME;
-            checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+            checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
         } catch (SQLiteException e) {
             //database doesn't exist yet.
         }
@@ -137,7 +164,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private void openDataBase() {
         //Open the database
         String myPath = dataBasePath + DB_NAME;
-        myDatabase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+        myDatabase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
 
     }
 
@@ -149,10 +176,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) { }
+    public void onCreate(SQLiteDatabase db) {
+    }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { }
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    }
 
 
     public List<Beer> searchBeers(String searchString) {
@@ -283,7 +312,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
                 latitude = Float.parseFloat(cursor.getString(cursor.getColumnIndex("latitude")));
                 longitude = Float.parseFloat(cursor.getString(cursor.getColumnIndex("longitude")));
-                coordinatesList.add(new GpsCoordinates(latitude,longitude));
+                coordinatesList.add(new GpsCoordinates(latitude, longitude));
 
                 cursor.moveToNext();
             }
@@ -317,7 +346,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
                 latitude = Float.parseFloat(cursor.getString(cursor.getColumnIndex("latitude")));
                 longitude = Float.parseFloat(cursor.getString(cursor.getColumnIndex("longitude")));
-                coordinatesList.add(new GpsCoordinates(latitude,longitude));
+                coordinatesList.add(new GpsCoordinates(latitude, longitude));
 
                 cursor.moveToNext();
             }
@@ -357,7 +386,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
 
     public static DatabaseManager getInstance(Context context) {
-        if(databaseManagerInstance == null){
+        if (databaseManagerInstance == null) {
             initializeDatabaseManager(context);
         }
         return databaseManagerInstance;
@@ -389,7 +418,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String[] parameters = new String[]{};
         Cursor cursor = myDatabase.rawQuery(query, parameters);
         try {
-            for(String col: cursor.getColumnNames()){
+            for (String col : cursor.getColumnNames()) {
                 Log.i("Info", "Cols in bars " + col);
             }
             Log.i("Info: ", "Rowcount " + cursor.getCount());
@@ -427,7 +456,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String[] parameters = new String[]{};
         Cursor cursor = myDatabase.rawQuery(query, parameters);
         try {
-            for(String col: cursor.getColumnNames()){
+            for (String col : cursor.getColumnNames()) {
                 Log.i("Info", "Cols in beers " + col);
             }
             Log.i("Info/Rowcount: ", "" + cursor.getCount());
@@ -463,7 +492,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String[] parameters = new String[]{};
         Cursor cursor = myDatabase.rawQuery(query, parameters);
         try {
-            for(String col: cursor.getColumnNames()){
+            for (String col : cursor.getColumnNames()) {
                 Log.i("Info", "Cols in BeersBars " + col);
             }
             Log.i("Info/BeersBars: ", "" + cursor.getCount());
@@ -497,7 +526,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
 
-    public List<Pair<Beer,Price>> getBeersFromBar(Bar bar) {
+    public List<Pair<Beer, Price>> getBeersFromBar(Bar bar) {
         return barMap.get(bar);
     }
 
@@ -505,9 +534,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String query = "SELECT id FROM Beers WHERE name LIKE ? OR manufacturer LIKE ? OR type LIKE ?";
 
         String[] parameters = new String[]{
-            "%" + searchString + "%",
-            "%" + searchString + "%",
-            "%" + searchString + "%"
+                "%" + searchString + "%",
+                "%" + searchString + "%",
+                "%" + searchString + "%"
         };
 
         List<Beer> beers = new ArrayList<>();
@@ -529,7 +558,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String query = "SELECT id FROM Bars WHERE name LIKE ?";
 
         String[] parameters = new String[]{
-            "%" + searchString + "%"
+                "%" + searchString + "%"
         };
 
         List<Bar> bars = new ArrayList<>();
@@ -547,4 +576,29 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return bars;
     }
 
+    public void testAdd(JSONObject obj) {
+
+        try {
+            JSONArray beersArray = obj.getJSONArray("beers");
+
+            JSONObject beer = (JSONObject) beersArray.get(1);
+            String id = beer.get("id").toString();
+            String name = beer.get("name").toString();
+            String manufacturer = beer.get("manufacturer").toString();
+            String type = beer.get("type").toString();
+            String description = beer.get("description").toString();
+
+            ContentValues values = new ContentValues();
+            values.put("id", 45);
+            values.put("name", name);
+            values.put("manufacturer", manufacturer);
+            values.put("type", type);
+            values.put("description", description);
+
+            Log.i("Database", "Insert test: " + myDatabase.insert("Beers", null, values));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }
