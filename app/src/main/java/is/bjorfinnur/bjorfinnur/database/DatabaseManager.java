@@ -77,16 +77,17 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
 
         JsonDatabaseDownloader testDownloader = new JsonDatabaseDownloader();
-        JSONObject testObject = null;
+        JSONObject databaseObject = null;
         try {
-            testObject = testDownloader.execute("").get();
+            databaseObject = testDownloader.execute("").get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
 
-        //testAdd(testObject);
+        recreateDatabase();
+        fillNewDatabase(databaseObject);
 
         setUpMaps();
     }
@@ -576,26 +577,101 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return bars;
     }
 
-    public void testAdd(JSONObject obj) {
+    public void recreateDatabase() {
+
+        //Beers
+        myDatabase.delete("Beers", null, null);
+
+        String beerCreateString = "CREATE TABLE IF NOT EXISTS Bars (" +
+                "id INTEGER NOT NULL, " +
+                "name TEXT NOT NULL UNIQUE, " +
+                "manufacturer TEXT NOT NULL, " +
+                "type TEXT NOT NULL, " +
+                "description TEXT NOT NULL, " +
+                "PRIMARY KEY(id))";
+        myDatabase.execSQL(beerCreateString);
+
+        //Bars
+        myDatabase.delete("Bars", null, null);
+
+        String barCreateString = "CREATE TABLE IF NOT EXISTS Bars (" +
+                "id INTEGER NOT NULL, " +
+                "name TEXT NOT NULL UNIQUE, " +
+                "address TEXT NOT NULL, " +
+                "latitude TEXT NOT NULL, " +
+                "longitude TEXT NOT NULL, " +
+                "description TEXT NOT NULL, " +
+                "PRIMARY KEY(id))";
+        myDatabase.execSQL(barCreateString);
+
+        //Connections
+        myDatabase.delete("BeersBars", null, null);
+
+        String connCreateString = "CREATE TABLE IF NOT EXISTS Bars (" +
+                "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                "bar_id INTEGER NOT NULL, " +
+                "beer_id INTEGER NOT NULL, " +
+                "price INTEGER NOT NULL)";
+        myDatabase.execSQL(connCreateString);
+    }
+
+    public void fillNewDatabase(JSONObject obj) {
 
         try {
+
+            // Beers
             JSONArray beersArray = obj.getJSONArray("beers");
+            JSONObject beer;
 
-            JSONObject beer = (JSONObject) beersArray.get(1);
-            String id = beer.get("id").toString();
-            String name = beer.get("name").toString();
-            String manufacturer = beer.get("manufacturer").toString();
-            String type = beer.get("type").toString();
-            String description = beer.get("description").toString();
+            for(int i = 0; i<beersArray.length(); i++) {
 
-            ContentValues values = new ContentValues();
-            values.put("id", 45);
-            values.put("name", name);
-            values.put("manufacturer", manufacturer);
-            values.put("type", type);
-            values.put("description", description);
+                beer = (JSONObject) beersArray.get(i);
+                ContentValues beerValues = new ContentValues();
 
-            Log.i("Database", "Insert test: " + myDatabase.insert("Beers", null, values));
+                beerValues.put("id", beer.get("id").toString());
+                beerValues.put("name", beer.get("name").toString());
+                beerValues.put("manufacturer", beer.get("manufacturer").toString());
+                beerValues.put("type", beer.get("type").toString());
+                beerValues.put("description", beer.get("description").toString());
+
+                myDatabase.insert("Beers", null, beerValues);
+            }
+
+            // Bars
+            JSONArray barsArray = obj.getJSONArray("bars");
+            JSONObject bar;
+
+            for(int i = 0; i<barsArray.length(); i++) {
+
+                bar = (JSONObject) barsArray.get(i);
+                ContentValues barValues = new ContentValues();
+
+                barValues.put("id", bar.get("id").toString());
+                barValues.put("name", bar.get("name").toString());
+                barValues.put("address", bar.get("address").toString());
+                barValues.put("latitude", bar.get("latitude").toString());
+                barValues.put("longitude", bar.get("longitude").toString());
+                barValues.put("description", bar.get("description").toString());
+
+                myDatabase.insert("Bars", null, barValues);
+            }
+
+            // Connections
+            JSONArray connectionsArray = obj.getJSONArray("beersBars");
+            JSONObject connection;
+
+            for(int i = 0; i<connectionsArray.length(); i++) {
+
+                connection = (JSONObject) connectionsArray.get(i);
+                ContentValues connValues = new ContentValues();
+
+                connValues.put("id", connection.get("id").toString());
+                connValues.put("bar_id", connection.get("bar_id").toString());
+                connValues.put("beer_id", connection.get("beer_id").toString());
+                connValues.put("price", connection.get("price").toString());
+
+                myDatabase.insert("BeersBars", null, connValues);
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
