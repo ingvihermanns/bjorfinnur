@@ -32,7 +32,7 @@ public class JsonDatabaseDownloader extends AsyncTask<String, Void, JSONObject> 
     }
 
     public JSONObject downloadFile() {
-        String urlstring = "https://notendur.hi.is/athg17/bjorfinnur/db.json";
+        String urlstring = "https://notendur.hi.is/ithh5/bjorfinnur/bjorfinnur.json";
         JSONObject obj = null;
         try {
             URL url = new URL(urlstring);
