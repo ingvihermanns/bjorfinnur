@@ -45,21 +45,17 @@ public class MainScreenActivity extends TabActivity {
          * By using TabSpec setIndicator() we can set name to tab. */
 
         /** tid1 is firstTabSpec Id. Its used to access outside. */
-        //TabSpec firstTabSpec = tabHost.newTabSpec("tid1");
-        TabSpec secondTabSpec = tabHost.newTabSpec("tid2");
         TabSpec beerTabSpec = tabHost.newTabSpec("tid3");
         TabSpec barTabSpec = tabHost.newTabSpec("tid4");
 
         /** TabSpec setIndicator() is used to set name for the tab. */
         /** TabSpec setContent() is used to set content for a particular tab. */
         //firstTabSpec.setIndicator("old f").setContent(new Intent(this,FirstTab.class));
-        secondTabSpec.setIndicator("old s").setContent(new Intent(this, SecondTab.class));
         beerTabSpec.setIndicator("Beers").setContent(new Intent(this, BeerTab.class));
         barTabSpec.setIndicator("Bars").setContent(new Intent(this, BarTab.class));
 
         /** Add tabSpec to the TabHost to display. */
         //tabHost.addTab(firstTabSpec);
-        tabHost.addTab(secondTabSpec);
         tabHost.addTab(beerTabSpec);
         tabHost.addTab(barTabSpec);
 
@@ -82,6 +78,9 @@ public class MainScreenActivity extends TabActivity {
             }
         });
 
+
+        searchView.clearFocus();
+
     }
 
     private void callSearch(String query) {
@@ -102,24 +101,6 @@ public class MainScreenActivity extends TabActivity {
             ((SecondTab) currentActivity).getNames(query);
         }
     }
-
-    /*private List<GpsCoordinates> callMap(String query) {
-        Activity currentActivity = getCurrentActivity();
-        List<GpsCoordinates> results = new ArrayList<>();
-        if (currentActivity instanceof FirstTab) {
-            results = ((FirstTab) currentActivity).populateMap(query);
-        }
-        return results;
-    }
-
-    private ArrayList<String> mapCall(String query){
-        Activity currentActivity = getCurrentActivity();
-        ArrayList<String> results = new ArrayList<>();
-        if (currentActivity instanceof FirstTab) {
-            results = ((FirstTab) currentActivity).populateBarNames(query);;
-        }
-        return results;
-    }*/
 
 
     private void setUpMapButton() {
