@@ -1,5 +1,6 @@
 package is.bjorfinnur.bjorfinnur.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,14 +9,27 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.util.Pair;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.json.simple.parser.JSONParser;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
 
 import is.bjorfinnur.bjorfinnur.data.Price;
 import is.bjorfinnur.bjorfinnur.data.Bar;
@@ -61,6 +75,20 @@ public class DatabaseManager extends SQLiteOpenHelper {
             throw new Error("Unable to open database");
         }
 
+
+        JsonDatabaseDownloader testDownloader = new JsonDatabaseDownloader();
+        JSONObject databaseObject = null;
+        try {
+            databaseObject = testDownloader.execute("").get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        recreateDatabase();
+        fillNewDatabase(databaseObject);
+
         setUpMaps();
     }
 
@@ -73,7 +101,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (!dbExist) {
             //By calling this method and empty database will be created into the default system path
             //of your application so we are gonna be able to overwrite that database with our database.
-            this.getReadableDatabase();
+            this.getWritableDatabase();
 
             try {
                 copyDataBase();
@@ -92,7 +120,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
         try {
             String myPath = dataBasePath + DB_NAME;
-            checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+            checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
         } catch (SQLiteException e) {
             //database doesn't exist yet.
         }
@@ -137,7 +165,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private void openDataBase() {
         //Open the database
         String myPath = dataBasePath + DB_NAME;
-        myDatabase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+        myDatabase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
 
     }
 
@@ -149,10 +177,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) { }
+    public void onCreate(SQLiteDatabase db) {
+    }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { }
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    }
 
 
     public List<Beer> searchBeers(String searchString) {
@@ -283,7 +313,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
                 latitude = Float.parseFloat(cursor.getString(cursor.getColumnIndex("latitude")));
                 longitude = Float.parseFloat(cursor.getString(cursor.getColumnIndex("longitude")));
-                coordinatesList.add(new GpsCoordinates(latitude,longitude));
+                coordinatesList.add(new GpsCoordinates(latitude, longitude));
 
                 cursor.moveToNext();
             }
@@ -317,7 +347,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
                 latitude = Float.parseFloat(cursor.getString(cursor.getColumnIndex("latitude")));
                 longitude = Float.parseFloat(cursor.getString(cursor.getColumnIndex("longitude")));
-                coordinatesList.add(new GpsCoordinates(latitude,longitude));
+                coordinatesList.add(new GpsCoordinates(latitude, longitude));
 
                 cursor.moveToNext();
             }
@@ -357,7 +387,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
 
     public static DatabaseManager getInstance(Context context) {
-        if(databaseManagerInstance == null){
+        if (databaseManagerInstance == null) {
             initializeDatabaseManager(context);
         }
         return databaseManagerInstance;
@@ -389,7 +419,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String[] parameters = new String[]{};
         Cursor cursor = myDatabase.rawQuery(query, parameters);
         try {
-            for(String col: cursor.getColumnNames()){
+            for (String col : cursor.getColumnNames()) {
                 Log.i("Info", "Cols in bars " + col);
             }
             Log.i("Info: ", "Rowcount " + cursor.getCount());
@@ -427,7 +457,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String[] parameters = new String[]{};
         Cursor cursor = myDatabase.rawQuery(query, parameters);
         try {
-            for(String col: cursor.getColumnNames()){
+            for (String col : cursor.getColumnNames()) {
                 Log.i("Info", "Cols in beers " + col);
             }
             Log.i("Info/Rowcount: ", "" + cursor.getCount());
@@ -463,7 +493,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String[] parameters = new String[]{};
         Cursor cursor = myDatabase.rawQuery(query, parameters);
         try {
-            for(String col: cursor.getColumnNames()){
+            for (String col : cursor.getColumnNames()) {
                 Log.i("Info", "Cols in BeersBars " + col);
             }
             Log.i("Info/BeersBars: ", "" + cursor.getCount());
@@ -497,7 +527,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
 
-    public List<Pair<Beer,Price>> getBeersFromBar(Bar bar) {
+    public List<Pair<Beer, Price>> getBeersFromBar(Bar bar) {
         return barMap.get(bar);
     }
 
@@ -505,9 +535,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String query = "SELECT id FROM Beers WHERE name LIKE ? OR manufacturer LIKE ? OR type LIKE ?";
 
         String[] parameters = new String[]{
-            "%" + searchString + "%",
-            "%" + searchString + "%",
-            "%" + searchString + "%"
+                "%" + searchString + "%",
+                "%" + searchString + "%",
+                "%" + searchString + "%"
         };
 
         List<Beer> beers = new ArrayList<>();
@@ -529,7 +559,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         String query = "SELECT id FROM Bars WHERE name LIKE ?";
 
         String[] parameters = new String[]{
-            "%" + searchString + "%"
+                "%" + searchString + "%"
         };
 
         List<Bar> bars = new ArrayList<>();
@@ -547,4 +577,104 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return bars;
     }
 
+    public void recreateDatabase() {
+
+        //Beers
+        myDatabase.delete("Beers", null, null);
+
+        String beerCreateString = "CREATE TABLE IF NOT EXISTS Bars (" +
+                "id INTEGER NOT NULL, " +
+                "name TEXT NOT NULL UNIQUE, " +
+                "manufacturer TEXT NOT NULL, " +
+                "type TEXT NOT NULL, " +
+                "description TEXT NOT NULL, " +
+                "PRIMARY KEY(id))";
+        myDatabase.execSQL(beerCreateString);
+
+        //Bars
+        myDatabase.delete("Bars", null, null);
+
+        String barCreateString = "CREATE TABLE IF NOT EXISTS Bars (" +
+                "id INTEGER NOT NULL, " +
+                "name TEXT NOT NULL UNIQUE, " +
+                "address TEXT NOT NULL, " +
+                "latitude TEXT NOT NULL, " +
+                "longitude TEXT NOT NULL, " +
+                "description TEXT NOT NULL, " +
+                "PRIMARY KEY(id))";
+        myDatabase.execSQL(barCreateString);
+
+        //Connections
+        myDatabase.delete("BeersBars", null, null);
+
+        String connCreateString = "CREATE TABLE IF NOT EXISTS Bars (" +
+                "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                "bar_id INTEGER NOT NULL, " +
+                "beer_id INTEGER NOT NULL, " +
+                "price INTEGER NOT NULL)";
+        myDatabase.execSQL(connCreateString);
+    }
+
+    public void fillNewDatabase(JSONObject obj) {
+
+        try {
+
+            // Beers
+            JSONArray beersArray = obj.getJSONArray("beers");
+            JSONObject beer;
+
+            for(int i = 0; i<beersArray.length(); i++) {
+
+                beer = (JSONObject) beersArray.get(i);
+                ContentValues beerValues = new ContentValues();
+
+                beerValues.put("id", beer.get("id").toString());
+                beerValues.put("name", beer.get("name").toString());
+                beerValues.put("manufacturer", beer.get("manufacturer").toString());
+                beerValues.put("type", beer.get("type").toString());
+                beerValues.put("description", beer.get("description").toString());
+
+                myDatabase.insert("Beers", null, beerValues);
+            }
+
+            // Bars
+            JSONArray barsArray = obj.getJSONArray("bars");
+            JSONObject bar;
+
+            for(int i = 0; i<barsArray.length(); i++) {
+
+                bar = (JSONObject) barsArray.get(i);
+                ContentValues barValues = new ContentValues();
+
+                barValues.put("id", bar.get("id").toString());
+                barValues.put("name", bar.get("name").toString());
+                barValues.put("address", bar.get("address").toString());
+                barValues.put("latitude", bar.get("latitude").toString());
+                barValues.put("longitude", bar.get("longitude").toString());
+                barValues.put("description", bar.get("description").toString());
+
+                myDatabase.insert("Bars", null, barValues);
+            }
+
+            // Connections
+            JSONArray connectionsArray = obj.getJSONArray("beersBars");
+            JSONObject connection;
+
+            for(int i = 0; i<connectionsArray.length(); i++) {
+
+                connection = (JSONObject) connectionsArray.get(i);
+                ContentValues connValues = new ContentValues();
+
+                connValues.put("id", connection.get("id").toString());
+                connValues.put("bar_id", connection.get("bar_id").toString());
+                connValues.put("beer_id", connection.get("beer_id").toString());
+                connValues.put("price", connection.get("price").toString());
+
+                myDatabase.insert("BeersBars", null, connValues);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }

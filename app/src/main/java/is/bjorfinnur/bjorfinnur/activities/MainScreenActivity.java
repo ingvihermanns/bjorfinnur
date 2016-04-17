@@ -82,9 +82,6 @@ public class MainScreenActivity extends TabActivity {
             }
         });
 
-        // test downloading
-        new JsonDatabaseDownloader().execute("");
-
     }
 
     private void callSearch(String query) {
