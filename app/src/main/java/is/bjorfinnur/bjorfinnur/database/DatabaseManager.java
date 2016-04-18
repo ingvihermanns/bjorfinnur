@@ -476,10 +476,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 String manufactorer = cursor.getString(cursor.getColumnIndex("manufacturer"));
                 String type = cursor.getString(cursor.getColumnIndex("type"));
                 String description = cursor.getString(cursor.getColumnIndex("description"));
-                Beer beer = new Beer(id, name, manufactorer, type, description);
+                String imageName = cursor.getString(cursor.getColumnIndex("imageName"));
+                //Beer beer = new Beer(id, name, manufactorer, type, description);
 
                 // TODO add imagenames to the database                            imagename
-                //Beer beer = new Beer(id, name, manufactorer, type, description, imagename);
+                Beer beer = new Beer(id, name, manufactorer, type, description, imageName);
                 List<Pair<Bar, Price>> list = new ArrayList<>();
                 beerMap.put(beer, list);
                 beerIds.put(beer.getId(), beer);
@@ -594,12 +595,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
         //Beers
         myDatabase.delete("Beers", null, null);
 
-        String beerCreateString = "CREATE TABLE IF NOT EXISTS Bars (" +
+        String beerCreateString = "CREATE TABLE IF NOT EXISTS Beers (" +
                 "id INTEGER NOT NULL, " +
                 "name TEXT NOT NULL UNIQUE, " +
                 "manufacturer TEXT NOT NULL, " +
                 "type TEXT NOT NULL, " +
                 "description TEXT NOT NULL, " +
+                "imageName TEXT, " +
                 "PRIMARY KEY(id))";
         myDatabase.execSQL(beerCreateString);
 
@@ -619,7 +621,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         //Connections
         myDatabase.delete("BeersBars", null, null);
 
-        String connCreateString = "CREATE TABLE IF NOT EXISTS Bars (" +
+        String connCreateString = "CREATE TABLE IF NOT EXISTS BeersBars (" +
                 "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                 "bar_id INTEGER NOT NULL, " +
                 "beer_id INTEGER NOT NULL, " +
@@ -635,9 +637,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
             JSONArray beersArray = obj.getJSONArray("beers");
             JSONObject beer;
 
-
-            // TODO add imagenames to the database
-
             for(int i = 0; i<beersArray.length(); i++) {
 
                 beer = (JSONObject) beersArray.get(i);
@@ -648,6 +647,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 beerValues.put("manufacturer", beer.get("manufacturer").toString());
                 beerValues.put("type", beer.get("type").toString());
                 beerValues.put("description", beer.get("description").toString());
+                beerValues.put("imageName", beer.get("imageName").toString());
+
+                Log.i("JSON: ", beer.toString());
 
                 myDatabase.insert("Beers", null, beerValues);
             }
