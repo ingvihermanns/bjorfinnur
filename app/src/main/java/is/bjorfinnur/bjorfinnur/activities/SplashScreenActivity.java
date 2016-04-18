@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import is.bjorfinnur.bjorfinnur.R;
+import is.bjorfinnur.bjorfinnur.database.DatabaseManager;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
@@ -20,10 +21,13 @@ public class SplashScreenActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent beerListIntent = new Intent(SplashScreenActivity.this, StartScreenActivity.class);
+                DatabaseManager.getInstance(SplashScreenActivity.this);
+                Intent beerListIntent = new Intent(SplashScreenActivity.this, MainScreenActivity.class);
                 SplashScreenActivity.this.startActivity(beerListIntent);
                 SplashScreenActivity.this.finish();
             }
         }, SPLASH_DISPLAY_TIME);
     }
+
+
 }

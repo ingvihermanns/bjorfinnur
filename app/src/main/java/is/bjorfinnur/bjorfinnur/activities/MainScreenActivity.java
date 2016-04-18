@@ -74,7 +74,7 @@ public class MainScreenActivity extends TabActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.e("querywin", newText);
-                if(newText.equals(" ")){
+                if (newText.equals(" ")) {
                     mostRecentQuery = "";
                     MainScreenActivity.this.callSearch(mostRecentQuery);
                 }
@@ -84,7 +84,7 @@ public class MainScreenActivity extends TabActivity {
         });
 
 
-        searchView.clearFocus();
+        //getCurrentFocus().clearFocus();
 
     }
 
@@ -96,6 +96,7 @@ public class MainScreenActivity extends TabActivity {
 
     private void setUpSortByPriceButton() {
         Button button = (Button) findViewById(R.id.sortButtonPrice);
+        button.setFocusableInTouchMode(true);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,7 +171,8 @@ public class MainScreenActivity extends TabActivity {
 
     private void setUpMapButton() {
         Button mapButton = (Button) findViewById(R.id.mapbutton);
-
+        mapButton.setFocusableInTouchMode(true);
+        mapButton.requestFocus();
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
