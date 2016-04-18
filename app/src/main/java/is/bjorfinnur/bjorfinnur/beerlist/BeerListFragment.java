@@ -24,6 +24,8 @@ import is.bjorfinnur.bjorfinnur.data.Price;
 import is.bjorfinnur.bjorfinnur.database.DatabaseManager;
 import is.bjorfinnur.bjorfinnur.expandablerecyclerview.Model.ParentListItem;
 
+import static is.bjorfinnur.bjorfinnur.util.MapUtil.getMyLocation;
+
 public class BeerListFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
@@ -91,9 +93,6 @@ public class BeerListFragment extends Fragment {
 
 
     public void sortByPrice(String query, boolean order) {
-
-
-
         List<Beer> contenderBeers = databaseManager.searchBeers2(query);
 
         List<Pair<Beer, List<Pair<Bar, Price>>>> beerMapAsList = new ArrayList<>();
@@ -157,4 +156,65 @@ public class BeerListFragment extends Fragment {
         }
         return parentListItems;
     }
+
+    public void sortByDistance(String query, boolean order) {
+        List<Beer> contenderBeers = databaseManager.searchBeers2(query);
+
+        List<Pair<Beer, List<Pair<Bar, Price>>>> beerMapAsList = new ArrayList<>();
+
+        for(Beer beer: contenderBeers){
+            List<Pair<Bar, Price>> barPriceList = databaseManager.getBarsFromBeer(beer);
+            Pair<Beer, List<Pair<Bar, Price>>> beerPair = new Pair<>(beer, barPriceList);
+            beerMapAsList.add(beerPair);
+        }
+
+
+        Comparator<Pair<Beer, List<Pair<Bar, Price>>>> comparator = new Comparator<Pair<Beer, List<Pair<Bar, Price>>>>() {
+            @Override
+            public int compare(Pair<Beer, List<Pair<Bar, Price>>> lhs, Pair<Beer, List<Pair<Bar, Price>>> rhs) {
+                Double minl = minDistance(lhs);
+                Double minr = minDistance(rhs);
+                return minl.compareTo(minr);
+            }
+
+            private Double minDistance(Pair<Beer, List<Pair<Bar, Price>>> lhs) {
+                List<Pair<Bar, Price>> pairList = lhs.second;
+                Double minDistance = Double.MAX_VALUE;
+                for(Pair<Bar, Price> pair: pairList){
+                    Double distance = pair.first.calculateDistanceToInMeters(getMyLocation(getContext()));
+                    if(distance < minDistance){
+                        minDistance = distance;
+                    }
+                }
+                return minDistance;
+            }
+        };
+
+        if(order) {
+            Collections.sort(beerMapAsList, comparator);
+        }else{
+            Collections.sort(beerMapAsList, Collections.reverseOrder(comparator));
+        }
+
+        List<Beer> beers = new ArrayList<>();
+
+        for(Pair<Beer, List<Pair<Bar, Price>>> pair: beerMapAsList){
+            beers.add(pair.first);
+        }
+
+        beerExpandableAdapter = new BeerExpandableAdapter(getActivity(), beersToParents(beers));
+
+
+        mRecyclerView.setAdapter(beerExpandableAdapter);
+    }
+
+
+
+
+
+
+
+
+
+
 }

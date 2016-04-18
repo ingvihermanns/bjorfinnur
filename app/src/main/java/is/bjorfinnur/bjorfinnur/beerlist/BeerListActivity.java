@@ -12,6 +12,7 @@ public class BeerListActivity extends FragmentActivity {
     BeerListFragment beerListFragment;
     boolean lastNameOrder = false;
     boolean lastPriceOrder = false;
+    boolean lastDistanceOrder = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,4 +43,10 @@ public class BeerListActivity extends FragmentActivity {
         lastNameOrder = !lastNameOrder;
         beerListFragment.sortByName(query, lastNameOrder);
     }
+
+    public void sortByDistance(String query) {
+        lastDistanceOrder = !lastDistanceOrder;
+        beerListFragment.sortByDistance(query, lastDistanceOrder);
+    }
+
 }

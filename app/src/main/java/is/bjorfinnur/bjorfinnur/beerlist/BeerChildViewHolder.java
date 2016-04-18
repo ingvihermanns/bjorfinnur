@@ -68,6 +68,8 @@ public class BeerChildViewHolder extends ChildViewHolder {
 
         LinearLayout linearLayout = (LinearLayout)itemView.findViewById(R.id.price_row_linear_layout);
 
+
+
         for(Pair<Bar, Price> pair: pairList){
             addBar(pair.first, pair.second, linearLayout);
         }
@@ -87,6 +89,7 @@ public class BeerChildViewHolder extends ChildViewHolder {
         TextView beerPriceText = (TextView)relativeLayout.findViewById(R.id.beer_card_bar_row_price_text);
         Button mapButton = (Button) relativeLayout.findViewById(R.id.beer_card_bar_row_map_button);
 
+
         String addon = "";
         try {
             double distanceInMeters = bar.calculateDistanceToInMeters(getMyLocation(itemView.getContext()));
@@ -94,6 +97,7 @@ public class BeerChildViewHolder extends ChildViewHolder {
         }catch (Exception e){
             e.printStackTrace();
         }
+
         barNameText.setText(bar.getName() + addon);
         beerPriceText.setText(price.getUnits() + " " + price.getCurrency());
         setUpMapButton(mapButton, bar);

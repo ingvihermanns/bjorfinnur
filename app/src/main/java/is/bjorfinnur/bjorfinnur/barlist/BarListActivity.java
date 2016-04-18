@@ -12,6 +12,7 @@ public class BarListActivity extends FragmentActivity {
     BarListFragment barListFragment;
     boolean lastNameOrder = false;
     boolean lastPriceOrder = false;
+    boolean lastDistanceOrder = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,5 +44,10 @@ public class BarListActivity extends FragmentActivity {
 
     public void search(String query){
         barListFragment.search(query);
+    }
+
+    public void sortByDistance(String query) {
+        lastDistanceOrder = !lastDistanceOrder;
+        barListFragment.sortByDistance(query, lastDistanceOrder);
     }
 }

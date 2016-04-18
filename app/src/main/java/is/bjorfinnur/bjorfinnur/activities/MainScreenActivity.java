@@ -91,6 +91,7 @@ public class MainScreenActivity extends TabActivity {
     private void setUpSortButtons() {
         setUpSortByNameButton();
         setUpSortByPriceButton();
+        setUpSortByDistanceButton();
     }
 
     private void setUpSortByPriceButton() {
@@ -104,6 +105,18 @@ public class MainScreenActivity extends TabActivity {
         });
     }
 
+    private void setUpSortByDistanceButton() {
+        Button button = (Button) findViewById(R.id.sortButtonDistance);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainScreenActivity.this.sortByDistance(MainScreenActivity.this.mostRecentQuery);
+            }
+        });
+
+    }
+
     private void setUpSortByNameButton() {
         Button button = (Button) findViewById(R.id.sortButtonName);
 
@@ -115,7 +128,6 @@ public class MainScreenActivity extends TabActivity {
         });
 
     }
-
 
     private void sortByPrice(String query) {
         Activity currentActivity = getCurrentActivity();
@@ -132,6 +144,15 @@ public class MainScreenActivity extends TabActivity {
             ((BeerListActivity) currentActivity).sortByName(query);
         } else if (currentActivity instanceof BarListActivity) {
             ((BarListActivity) currentActivity).sortByName(query);
+        }
+    }
+
+    private void sortByDistance(String query) {
+        Activity currentActivity = getCurrentActivity();
+        if (currentActivity instanceof BeerListActivity) {
+            ((BeerListActivity) currentActivity).sortByDistance(query);
+        } else if (currentActivity instanceof BarListActivity) {
+            ((BarListActivity) currentActivity).sortByDistance(query);
         }
     }
 

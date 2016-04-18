@@ -23,6 +23,8 @@ import is.bjorfinnur.bjorfinnur.data.Price;
 import is.bjorfinnur.bjorfinnur.database.DatabaseManager;
 import is.bjorfinnur.bjorfinnur.expandablerecyclerview.Model.ParentListItem;
 
+import static is.bjorfinnur.bjorfinnur.util.MapUtil.getMyLocation;
+
 public class BarListFragment extends Fragment {
     // todo implement distance stuff
     private RecyclerView mRecyclerView;
@@ -150,4 +152,50 @@ public class BarListFragment extends Fragment {
         barExpandableAdapter = new BarExpandableAdapter(getActivity(), barsToParents(bars));
         mRecyclerView.setAdapter(barExpandableAdapter);
     }
+
+
+    public void sortByDistance(String query, boolean order) {
+
+        List<Bar> contenderBars = databaseManager.searchBars2(query);
+
+        List<Pair<Bar, List<Pair<Beer, Price>>>> barMapAsList = new ArrayList<>();
+
+        for(Bar bar: contenderBars){
+            List<Pair<Beer, Price>> beerPriceList = databaseManager.getBeersFromBar(bar);
+            Pair<Bar, List<Pair<Beer, Price>>> barPair = new Pair<>(bar, beerPriceList);
+            barMapAsList.add(barPair);
+        }
+
+
+
+        Comparator<Pair<Bar, List<Pair<Beer, Price>>>> comparator = new Comparator<Pair<Bar, List<Pair<Beer, Price>>>>() {
+            @Override
+            public int compare(Pair<Bar, List<Pair<Beer, Price>>> lhs, Pair<Bar, List<Pair<Beer, Price>>> rhs) {
+                Double minl = minDistance(lhs);
+                Double minr = minDistance(rhs);
+                return minl.compareTo(minr);
+            }
+
+            private Double minDistance(Pair<Bar, List<Pair<Beer, Price>>> lhs) {
+                return lhs.first.calculateDistanceToInMeters(getMyLocation(getContext()));
+            }
+        };
+
+        if(order) {
+            Collections.sort(barMapAsList, comparator);
+        }else{
+            Collections.sort(barMapAsList, Collections.reverseOrder(comparator));
+        }
+
+        List<Bar> bars = new ArrayList<>();
+
+        for(Pair<Bar, List<Pair<Beer, Price>>> pair: barMapAsList){
+            bars.add(pair.first);
+        }
+
+        barExpandableAdapter = new BarExpandableAdapter(getActivity(), barsToParents(bars));
+        mRecyclerView.setAdapter(barExpandableAdapter);
+    }
+
+
 }
