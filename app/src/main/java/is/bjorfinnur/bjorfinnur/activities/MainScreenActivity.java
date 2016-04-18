@@ -153,7 +153,7 @@ public class MainScreenActivity extends TabActivity {
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<Bar> bars =  getBarNames();
+                List<Bar> bars =  getBars();
                 ArrayList<String> barNames = new ArrayList<>();
                 ArrayList<String> barLatitudes = new ArrayList<>();
                 ArrayList<String> barLongitudes = new ArrayList<>();
@@ -165,11 +165,11 @@ public class MainScreenActivity extends TabActivity {
                 MapActivity.launchIntent(MainScreenActivity.this, barNames, barLatitudes, barLongitudes);
             }
 
-            private List<Bar> getBarNames() {
+            private List<Bar> getBars() {
                 DatabaseManager databaseManager = DatabaseManager.getInstance(MainScreenActivity.this);
                 Activity currentActivity = getCurrentActivity();
                 List<Bar> barList = new ArrayList<>();
-                if (currentActivity instanceof BeerTab || currentActivity instanceof BeerListActivity) {
+                if (currentActivity instanceof BeerListActivity || currentActivity instanceof BeerListActivity) {
                     List<Beer> beers = databaseManager.searchBeers2(mostRecentQuery);
                     Set<Bar> bars = new TreeSet<>();
                     for(Beer beer: beers){
@@ -178,7 +178,7 @@ public class MainScreenActivity extends TabActivity {
                         }
                     }
                     barList.addAll(bars);
-                } else if (currentActivity instanceof BarTab) {
+                } else if (currentActivity instanceof BarListActivity) {
                     barList.addAll(databaseManager.searchBars2(mostRecentQuery));
                 }
                 return barList;
