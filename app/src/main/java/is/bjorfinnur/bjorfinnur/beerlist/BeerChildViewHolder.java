@@ -90,7 +90,7 @@ public class BeerChildViewHolder extends ChildViewHolder {
         String addon = "";
         try {
             double distanceInMeters = bar.calculateDistanceToInMeters(getMyLocation(itemView.getContext()));
-            addon = " " + distanceInMeters + " m.";
+            addon = " " + (int)distanceInMeters + " m.";
         }catch (Exception e){
             e.printStackTrace();
         }

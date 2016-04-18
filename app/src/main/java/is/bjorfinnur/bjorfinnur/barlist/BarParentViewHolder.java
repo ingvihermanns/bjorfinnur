@@ -13,6 +13,8 @@ import is.bjorfinnur.bjorfinnur.data.Bar;
 import is.bjorfinnur.bjorfinnur.expandablerecyclerview.ViewHolder.ParentViewHolder;
 import is.bjorfinnur.bjorfinnur.util.MapBarOnClickListener;
 
+import static is.bjorfinnur.bjorfinnur.util.MapUtil.getMyLocation;
+
 public class BarParentViewHolder extends ParentViewHolder {
     private static final float INITIAL_POSITION = 0.0f;
     private static final float ROTATED_POSITION = 180f;
@@ -46,6 +48,14 @@ public class BarParentViewHolder extends ParentViewHolder {
         Button mapButton = (Button) itemView.findViewById(R.id.parent_list_item_title_button);
         MapBarOnClickListener listener = new MapBarOnClickListener(itemView.getContext(), Arrays.asList(new Bar[]{bar}));
         mapButton.setOnClickListener(listener);
-        titleTextView.setText(bar.getName());
+
+        String addon = "";
+        try {
+            double distanceInMeters = bar.calculateDistanceToInMeters(getMyLocation(itemView.getContext()));
+            addon = " " + (int)distanceInMeters + " m.";
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        titleTextView.setText(bar.getName() + addon);
     }
 }
