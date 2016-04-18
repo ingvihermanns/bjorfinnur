@@ -1,6 +1,9 @@
 package is.bjorfinnur.bjorfinnur.data;
 
 
+import android.location.Location;
+
+
 public class Beer implements Comparable<Beer>{
 
     private final int id;
@@ -62,4 +65,6 @@ public class Beer implements Comparable<Beer>{
     public String getImageName() {
         return imageName;
     }
+
+
 }

@@ -1,4 +1,4 @@
-package is.bjorfinnur.bjorfinnur.beerlist;
+package is.bjorfinnur.bjorfinnur.barlist;
 
 
 import android.os.Bundle;
@@ -7,9 +7,9 @@ import android.support.v4.app.FragmentManager;
 
 import is.bjorfinnur.bjorfinnur.R;
 
-public class BeerListActivity extends FragmentActivity {
+public class BarListActivity extends FragmentActivity {
 
-    BeerListFragment beerListFragment;
+    BarListFragment barListFragment;
     boolean lastNameOrder = false;
     boolean lastPriceOrder = false;
 
@@ -19,27 +19,29 @@ public class BeerListActivity extends FragmentActivity {
         setContentView(R.layout.activity_fragment);
 
         FragmentManager fm = getSupportFragmentManager();
-        beerListFragment = (BeerListFragment)fm.findFragmentById(R.id.fragment_container);
+        barListFragment = (BarListFragment)fm.findFragmentById(R.id.fragment_container);
 
-        if (beerListFragment == null) {
-            beerListFragment = new BeerListFragment();
+        if (barListFragment == null) {
+            barListFragment = new BarListFragment();
             fm.beginTransaction()
-                    .add(R.id.fragment_container, beerListFragment)
+                    .add(R.id.fragment_container, barListFragment)
                     .commit();
         }
     }
 
-    public void search(String query){
-        beerListFragment.search(query);
-    }
 
     public void sortByPrice(String query) {
         lastPriceOrder = !lastPriceOrder;
-        beerListFragment.sortByPrice(query, lastPriceOrder);
+        barListFragment.sortByPrice(query, lastPriceOrder);
     }
 
     public void sortByName(String query) {
         lastNameOrder = !lastNameOrder;
-        beerListFragment.sortByName(query, lastNameOrder);
+        barListFragment.sortByName(query, lastNameOrder);
+    }
+
+
+    public void search(String query){
+        barListFragment.search(query);
     }
 }

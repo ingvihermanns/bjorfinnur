@@ -5,12 +5,22 @@
     android:background="@drawable/abc_list_selector_background_transition_holo_light">
 
     <TextView
-        android:id="@+id/parent_list_item_beer_title_text_view"
+        android:id="@+id/parent_list_item_title_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:textStyle="bold"
         android:text="Crime Title" />
+
+    <Button
+        android:id="@+id/parent_list_item_title_button"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="Map"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/parent_list_item_expand_arrow"
+        android:layout_centerVertical="true" />
+
 
     <ImageButton
         android:id="@+id/parent_list_item_expand_arrow"

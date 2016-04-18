@@ -1,5 +1,7 @@
 package is.bjorfinnur.bjorfinnur.data;
 
+import android.location.Location;
+
 public class Bar implements Comparable<Bar>{
 
     private final int id;
@@ -56,5 +58,12 @@ public class Bar implements Comparable<Bar>{
     @Override
     public int compareTo(Bar another) {
         return (new Integer(this.id)).compareTo(another.getId());
+    }
+
+    public double calculateDistanceToInMeters(Location mylocation){
+        Location barLocation = new Location("");
+        barLocation.setLatitude(Double.parseDouble(this.getLatitude()));
+        barLocation.setLongitude(Double.parseDouble(this.getLongitude()));
+        return barLocation.distanceTo(mylocation);
     }
 }

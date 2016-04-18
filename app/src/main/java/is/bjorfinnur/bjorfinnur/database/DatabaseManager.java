@@ -84,6 +84,23 @@ public class DatabaseManager extends SQLiteOpenHelper {
         setUpMaps();
     }
 
+    public List<Pair<Bar, List<Pair<Beer, Price>>>> getBarMapAsList(){
+        List<Pair<Bar, List<Pair<Beer, Price>>>> list = new ArrayList<>();
+        for(Bar bar: barMap.keySet()){
+            Pair<Bar, List<Pair<Beer, Price>>> pair = new Pair<>(bar, barMap.get(bar));
+            list.add(pair);
+        }
+        return list;
+    }
+
+    public List<Pair<Beer, List<Pair<Bar, Price>>>> getBeerMapAsList(){
+        List<Pair<Beer, List<Pair<Bar, Price>>>> list = new ArrayList<>();
+        for(Beer beer: beerMap.keySet()){
+            Pair<Beer, List<Pair<Bar, Price>>> pair = new Pair<>(beer, beerMap.get(beer));
+            list.add(pair);
+        }
+        return list;
+    }
 
     /**
      * Creates a empty database on the system and rewrites it with your own database.
@@ -434,7 +451,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
     private void addBeersToBeerMap() {
-
+        // TODO add imagenames to the database
 
         // Table schema:
         //        CREATE TABLE "Beers" (
@@ -460,6 +477,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 String type = cursor.getString(cursor.getColumnIndex("type"));
                 String description = cursor.getString(cursor.getColumnIndex("description"));
                 Beer beer = new Beer(id, name, manufactorer, type, description);
+
+                // TODO add imagenames to the database                            imagename
+                //Beer beer = new Beer(id, name, manufactorer, type, description, imagename);
                 List<Pair<Bar, Price>> list = new ArrayList<>();
                 beerMap.put(beer, list);
                 beerIds.put(beer.getId(), beer);
@@ -614,6 +634,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
             // Beers
             JSONArray beersArray = obj.getJSONArray("beers");
             JSONObject beer;
+
+
+            // TODO add imagenames to the database
 
             for(int i = 0; i<beersArray.length(); i++) {
 

@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Name"
-                android:id="@+id/sortButton1"
+                android:id="@+id/sortButtonName"
                 android:layout_gravity="center_horizontal" />
 
             <Button
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Price"
-                android:id="@+id/sortButton2"
+                android:id="@+id/sortButtonPrice"
                 android:layout_gravity="center_horizontal" />
 
         </LinearLayout>

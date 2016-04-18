@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:padding="6dip">
     <ImageView
-        android:id="@+id/list_item_beer_card_child_header_icon"
+        android:id="@+id/list_item_card_child_header_icon"
         android:layout_width="wrap_content"
         android:layout_height="80dp"
         android:layout_alignParentRight="true"
@@ -13,37 +13,37 @@
         android:src="@drawable/bjorfinnur" />
 
     <TextView
-        android:id="@+id/list_item_beer_card_child_header_description_text"
+        android:id="@+id/list_item_card_child_header_description_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Apple Orange Apple Orange Apple Orange Apple Orange Apple Orange Apple Orange"
-        android:layout_toLeftOf="@id/list_item_beer_card_child_header_icon"
+        android:layout_toLeftOf="@id/list_item_card_child_header_icon"
         android:minHeight="60dp"/>
 
     <TextView
-        android:id="@+id/list_item_beer_card_child_header_type"
+        android:id="@+id/list_item_card_child_header_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:textColor="#ffffff"
         android:text="Type"
-        android:layout_below="@+id/list_item_beer_card_child_header_description_text" />
+        android:layout_below="@+id/list_item_card_child_header_description_text" />
 
     <TextView
-        android:id="@+id/list_item_beer_card_child_header_manufacturer"
+        android:id="@+id/list_item_card_child_header_manufacturer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:textColor="#ffffff"
         android:text="Manufacturer"
-        android:layout_below="@+id/list_item_beer_card_child_header_type" />
+        android:layout_below="@+id/list_item_card_child_header_type" />
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bar_price_row_linear_layout"
-        android:layout_below="@+id/list_item_beer_card_child_header_manufacturer">
+        android:id="@+id/price_row_linear_layout"
+        android:layout_below="@+id/list_item_card_child_header_manufacturer">
     </LinearLayout>
 
 </RelativeLayout>

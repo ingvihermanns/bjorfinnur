@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import is.bjorfinnur.bjorfinnur.barlist.BarListActivity;
 import is.bjorfinnur.bjorfinnur.beerlist.BeerListActivity;
 import is.bjorfinnur.bjorfinnur.data.Bar;
 import is.bjorfinnur.bjorfinnur.data.Beer;
@@ -32,6 +33,7 @@ public class MainScreenActivity extends TabActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
@@ -43,23 +45,21 @@ public class MainScreenActivity extends TabActivity {
          * By using TabSpec setIndicator() we can set name to tab. */
 
         /** tid1 is firstTabSpec Id. Its used to access outside. */
-        TabSpec beerTabSpec = tabHost.newTabSpec("tid1");
-        TabSpec barTabSpec = tabHost.newTabSpec("tid2");
-        TabSpec testSpec = tabHost.newTabSpec("tid3");
+        TabSpec beerListSpec = tabHost.newTabSpec("idBeerList");
+        TabSpec barListSpec = tabHost.newTabSpec("idBarList");
 
         /** TabSpec setIndicator() is used to set name for the tab. */
         /** TabSpec setContent() is used to set content for a particular tab. */
-        beerTabSpec.setIndicator("oldbeers").setContent(new Intent(this, BeerTab.class));
-        barTabSpec.setIndicator("Bars").setContent(new Intent(this, BarTab.class));
-        testSpec.setIndicator("Beers").setContent(new Intent(this, BeerListActivity.class));
+        beerListSpec.setIndicator("Beers").setContent(new Intent(this, BeerListActivity.class));
+        barListSpec.setIndicator("Bars").setContent(new Intent(this, BarListActivity.class));
 
         /** Add tabSpec to the TabHost to display. */
         //tabHost.addTab(firstTabSpec);
-        tabHost.addTab(beerTabSpec);
-        tabHost.addTab(barTabSpec);
-        tabHost.addTab(testSpec);
+        tabHost.addTab(beerListSpec);
+        tabHost.addTab(barListSpec);
 
         setUpMapButton();
+        setUpSortButtons();
 
         /* Called when the activity is first created. */
         SearchView searchView = (SearchView) findViewById(R.id.search_view);
@@ -73,8 +73,14 @@ public class MainScreenActivity extends TabActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                Log.e("querywin", newText);
+                if(newText.equals(" ")){
+                    mostRecentQuery = "";
+                    MainScreenActivity.this.callSearch(mostRecentQuery);
+                }
                 return true;
             }
+
         });
 
 
@@ -82,17 +88,61 @@ public class MainScreenActivity extends TabActivity {
 
     }
 
+    private void setUpSortButtons() {
+        setUpSortByNameButton();
+        setUpSortByPriceButton();
+    }
+
+    private void setUpSortByPriceButton() {
+        Button button = (Button) findViewById(R.id.sortButtonPrice);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainScreenActivity.this.sortByPrice(MainScreenActivity.this.mostRecentQuery);
+            }
+        });
+    }
+
+    private void setUpSortByNameButton() {
+        Button button = (Button) findViewById(R.id.sortButtonName);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainScreenActivity.this.sortByName(MainScreenActivity.this.mostRecentQuery);
+            }
+        });
+
+    }
+
+
+    private void sortByPrice(String query) {
+        Activity currentActivity = getCurrentActivity();
+        if (currentActivity instanceof BeerListActivity) {
+            ((BeerListActivity) currentActivity).sortByPrice(query);
+        } else if (currentActivity instanceof BarListActivity) {
+            ((BarListActivity) currentActivity).sortByPrice(query);
+        }
+    }
+
+    private void sortByName(String query) {
+        Activity currentActivity = getCurrentActivity();
+        if (currentActivity instanceof BeerListActivity) {
+            ((BeerListActivity) currentActivity).sortByName(query);
+        } else if (currentActivity instanceof BarListActivity) {
+            ((BarListActivity) currentActivity).sortByName(query);
+        }
+    }
+
     private void callSearch(String query) {
         Activity currentActivity = getCurrentActivity();
-        if (currentActivity instanceof BeerTab) {
-            Log.e("Info", "Query sent: " + query);
-            ((BeerTab) currentActivity).search(query);
-        } else if (currentActivity instanceof BarTab) {
-            Log.e("Info", "Query sent: " + query);
-            ((BarTab) currentActivity).search(query);
-        } else if (currentActivity instanceof BeerListActivity) {
+        if (currentActivity instanceof BeerListActivity) {
             Log.e("Info", "Query sent: " + query);
             ((BeerListActivity) currentActivity).search(query);
+        } else if (currentActivity instanceof BarListActivity) {
+            Log.e("Info", "Query sent: " + query);
+            ((BarListActivity) currentActivity).search(query);
         }
     }
 

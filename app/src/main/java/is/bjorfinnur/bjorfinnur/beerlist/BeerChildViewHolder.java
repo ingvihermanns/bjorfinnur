@@ -1,8 +1,7 @@
 package is.bjorfinnur.bjorfinnur.beerlist;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.provider.ContactsContract;
+import android.location.Location;
 import android.text.Html;
 import android.util.Log;
 import android.util.Pair;
@@ -25,6 +24,8 @@ import is.bjorfinnur.bjorfinnur.data.Price;
 import is.bjorfinnur.bjorfinnur.expandablerecyclerview.ViewHolder.ChildViewHolder;
 import is.bjorfinnur.bjorfinnur.util.MapBarOnClickListener;
 
+import static is.bjorfinnur.bjorfinnur.util.MapUtil.getMyLocation;
+
 public class BeerChildViewHolder extends ChildViewHolder {
 
     private final LayoutInflater mInflater;
@@ -43,9 +44,10 @@ public class BeerChildViewHolder extends ChildViewHolder {
         Beer beer = monsterPair.first;
         List<Pair<Bar, Price>> pairList = monsterPair.second;
 
+        ImageView imageView = (ImageView)itemView.findViewById(R.id.list_item_card_child_header_icon);
+        Drawable originaldrawable = imageView.getDrawable();
 
         try {
-            ImageView imageView = (ImageView)itemView.findViewById(R.id.list_item_beer_card_child_header_icon);
             String imageName = beer.getImageName();
             String uri = "@drawable/" + imageName;  // where myresource (without the extension) is the file
             int imageResource = itemView.getResources().getIdentifier(uri, null, itemView.getContext().getPackageName());
@@ -53,17 +55,18 @@ public class BeerChildViewHolder extends ChildViewHolder {
             imageView.setImageDrawable(drawable);
         }catch (Exception e){
             Log.e("Image", "error finding image");
+            imageView.setImageDrawable(originaldrawable);
         }
 
-        TextView beerDescriptionText = (TextView)itemView.findViewById(R.id.list_item_beer_card_child_header_description_text);
-        TextView beerTypeText = (TextView)itemView.findViewById(R.id.list_item_beer_card_child_header_type);
-        TextView beerManufacturerText = (TextView)itemView.findViewById(R.id.list_item_beer_card_child_header_manufacturer);
+        TextView beerDescriptionText = (TextView)itemView.findViewById(R.id.list_item_card_child_header_description_text);
+        TextView beerTypeText = (TextView)itemView.findViewById(R.id.list_item_card_child_header_type);
+        TextView beerManufacturerText = (TextView)itemView.findViewById(R.id.list_item_card_child_header_manufacturer);
 
         setTitleText(beerDescriptionText, "Description", beer.getDescription());
         setTitleText(beerTypeText, "Type", beer.getType());
         setTitleText(beerManufacturerText, "Manufacturer", beer.getManufacturer());
 
-        LinearLayout linearLayout = (LinearLayout)itemView.findViewById(R.id.bar_price_row_linear_layout);
+        LinearLayout linearLayout = (LinearLayout)itemView.findViewById(R.id.price_row_linear_layout);
 
         for(Pair<Bar, Price> pair: pairList){
             addBar(pair.first, pair.second, linearLayout);
@@ -78,13 +81,20 @@ public class BeerChildViewHolder extends ChildViewHolder {
 
     private void addBar(Bar bar, Price price, LinearLayout linearLayout) {
 
-        RelativeLayout relativeLayout = (RelativeLayout)mInflater.inflate(R.layout.beer_card_bar_row, viewGroup, false);
+        RelativeLayout relativeLayout = (RelativeLayout)mInflater.inflate(R.layout.card_row, viewGroup, false);
 
         TextView barNameText = (TextView)relativeLayout.findViewById(R.id.beer_card_bar_row_bar_name_text);
         TextView beerPriceText = (TextView)relativeLayout.findViewById(R.id.beer_card_bar_row_price_text);
         Button mapButton = (Button) relativeLayout.findViewById(R.id.beer_card_bar_row_map_button);
 
-        barNameText.setText(bar.getName());
+        String addon = "";
+        try {
+            double distanceInMeters = bar.calculateDistanceToInMeters(getMyLocation(itemView.getContext()));
+            addon = " " + distanceInMeters + " m.";
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        barNameText.setText(bar.getName() + addon);
         beerPriceText.setText(price.getUnits() + " " + price.getCurrency());
         setUpMapButton(mapButton, bar);
 
@@ -96,4 +106,6 @@ public class BeerChildViewHolder extends ChildViewHolder {
         MapBarOnClickListener listener = new MapBarOnClickListener(itemView.getContext(), Arrays.asList(new Bar[]{bar}));
         mapButton.setOnClickListener(listener);
     }
+
+
 }
