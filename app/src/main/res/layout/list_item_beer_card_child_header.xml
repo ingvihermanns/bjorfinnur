@@ -6,8 +6,9 @@
     android:padding="6dip">
     <ImageView
         android:id="@+id/list_item_card_child_header_icon"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="80dp"
+        android:maxWidth="100dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:src="@drawable/bjorfinnur" />
