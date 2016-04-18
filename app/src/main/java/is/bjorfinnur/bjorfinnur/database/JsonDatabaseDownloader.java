@@ -28,7 +28,7 @@ public class JsonDatabaseDownloader extends AsyncTask<String, Void, JSONObject> 
 
     protected void onPostExecute(Void param) {
 
-        // TODO: do something with the feed
+        // TO DO: do something with the feed
     }
 
     public JSONObject downloadFile() {

@@ -5,7 +5,7 @@
     android:background="@drawable/abc_list_selector_background_transition_holo_light">
 
     <TextView
-        android:id="@+id/parent_list_item_crime_title_text_view"
+        android:id="@+id/parent_list_item_beer_title_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"

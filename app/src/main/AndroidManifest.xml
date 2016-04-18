@@ -45,7 +45,7 @@
         <activity
             android:name=".activities.MapActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".beerlist.BeerTestActivity" />
+        <activity android:name=".beerlist.BeerListActivity" />
         <activity android:name=".tabs.BeerTab" />
         <activity android:name=".tabs.BarTab" />
         <activity android:name=".activities.MainScreenActivity">

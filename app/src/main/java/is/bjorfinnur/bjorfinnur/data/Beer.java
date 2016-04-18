@@ -8,13 +8,19 @@ public class Beer implements Comparable<Beer>{
     private final String manufacturer;
     private final String type;
     private final String description;
+    private final String imageName;
 
     public Beer(int id, String name, String manufacturer, String type, String description) {
+        this(id, name, manufacturer, type, description, "bjorfinnur");
+    }
+
+    public Beer(int id, String name, String manufacturer, String type, String description, String imageName) {
         this.name = name;
         this.manufacturer = manufacturer;
         this.type = type;
         this.description = description;
         this.id = id;
+        this.imageName = imageName;
     }
 
     public String getName() {
@@ -51,5 +57,9 @@ public class Beer implements Comparable<Beer>{
     @Override
     public int compareTo(Beer another) {
         return (new Integer(this.id)).compareTo(another.getId());
+    }
+
+    public String getImageName() {
+        return imageName;
     }
 }

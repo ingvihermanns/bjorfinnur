@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import is.bjorfinnur.bjorfinnur.beerlist.BeerTestActivity;
+import is.bjorfinnur.bjorfinnur.beerlist.BeerListActivity;
 import is.bjorfinnur.bjorfinnur.data.Bar;
 import is.bjorfinnur.bjorfinnur.data.Beer;
 import is.bjorfinnur.bjorfinnur.data.Price;
@@ -25,8 +25,6 @@ import is.bjorfinnur.bjorfinnur.database.DatabaseManager;
 import is.bjorfinnur.bjorfinnur.R;
 import is.bjorfinnur.bjorfinnur.tabs.BarTab;
 import is.bjorfinnur.bjorfinnur.tabs.BeerTab;
-import is.bjorfinnur.bjorfinnur.tabs.FirstTab;
-import is.bjorfinnur.bjorfinnur.tabs.SecondTab;
 
 public class MainScreenActivity extends TabActivity {
 
@@ -51,10 +49,9 @@ public class MainScreenActivity extends TabActivity {
 
         /** TabSpec setIndicator() is used to set name for the tab. */
         /** TabSpec setContent() is used to set content for a particular tab. */
-        //firstTabSpec.setIndicator("old f").setContent(new Intent(this,FirstTab.class));
-        beerTabSpec.setIndicator("Beers").setContent(new Intent(this, BeerTab.class));
+        beerTabSpec.setIndicator("oldbeers").setContent(new Intent(this, BeerTab.class));
         barTabSpec.setIndicator("Bars").setContent(new Intent(this, BarTab.class));
-        testSpec.setIndicator("test").setContent(new Intent(this, BeerTestActivity.class));
+        testSpec.setIndicator("Beers").setContent(new Intent(this, BeerListActivity.class));
 
         /** Add tabSpec to the TabHost to display. */
         //tabHost.addTab(firstTabSpec);
@@ -66,7 +63,6 @@ public class MainScreenActivity extends TabActivity {
 
         /* Called when the activity is first created. */
         SearchView searchView = (SearchView) findViewById(R.id.search_view);
-        searchView.clearFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -88,28 +84,23 @@ public class MainScreenActivity extends TabActivity {
 
     private void callSearch(String query) {
         Activity currentActivity = getCurrentActivity();
-        if (currentActivity instanceof FirstTab) {
-            Log.e("Info", "Query sent: " + query);
-            ((FirstTab) currentActivity).search(query);
-        } else if (currentActivity instanceof BeerTab) {
+        if (currentActivity instanceof BeerTab) {
             Log.e("Info", "Query sent: " + query);
             ((BeerTab) currentActivity).search(query);
         } else if (currentActivity instanceof BarTab) {
             Log.e("Info", "Query sent: " + query);
             ((BarTab) currentActivity).search(query);
-        } else if (currentActivity instanceof SecondTab) {
-            Log.e("Info", "fongum hnitin: " + query);
-            ((SecondTab) currentActivity).search(query);
-            ((SecondTab) currentActivity).populateDistance(query);
-            ((SecondTab) currentActivity).getNames(query);
+        } else if (currentActivity instanceof BeerListActivity) {
+            Log.e("Info", "Query sent: " + query);
+            ((BeerListActivity) currentActivity).search(query);
         }
     }
 
 
     private void setUpMapButton() {
-        Button MapButton = (Button) findViewById(R.id.mapbutton);
+        Button mapButton = (Button) findViewById(R.id.mapbutton);
 
-        MapButton.setOnClickListener(new View.OnClickListener() {
+        mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 List<Bar> bars =  getBarNames();
@@ -128,7 +119,7 @@ public class MainScreenActivity extends TabActivity {
                 DatabaseManager databaseManager = DatabaseManager.getInstance(MainScreenActivity.this);
                 Activity currentActivity = getCurrentActivity();
                 List<Bar> barList = new ArrayList<>();
-                if (currentActivity instanceof BeerTab) {
+                if (currentActivity instanceof BeerTab || currentActivity instanceof BeerListActivity) {
                     List<Beer> beers = databaseManager.searchBeers2(mostRecentQuery);
                     Set<Bar> bars = new TreeSet<>();
                     for(Beer beer: beers){

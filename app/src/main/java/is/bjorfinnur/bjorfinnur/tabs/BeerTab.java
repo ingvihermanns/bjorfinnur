@@ -32,6 +32,7 @@ public class BeerTab extends Activity{
         setContentView(R.layout.activity_expandable_list_view);
 
         databaseManager = DatabaseManager.getInstance(this);
+
         expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
         // setting list adapter
         refreshAdapter("");
