@@ -17,11 +17,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import is.bjorfinnur.bjorfinnur.beerlist.BeerTestActivity;
 import is.bjorfinnur.bjorfinnur.data.Bar;
 import is.bjorfinnur.bjorfinnur.data.Beer;
 import is.bjorfinnur.bjorfinnur.data.Price;
 import is.bjorfinnur.bjorfinnur.database.DatabaseManager;
-import is.bjorfinnur.bjorfinnur.database.JsonDatabaseDownloader;
 import is.bjorfinnur.bjorfinnur.R;
 import is.bjorfinnur.bjorfinnur.tabs.BarTab;
 import is.bjorfinnur.bjorfinnur.tabs.BeerTab;
@@ -45,19 +45,22 @@ public class MainScreenActivity extends TabActivity {
          * By using TabSpec setIndicator() we can set name to tab. */
 
         /** tid1 is firstTabSpec Id. Its used to access outside. */
-        TabSpec beerTabSpec = tabHost.newTabSpec("tid3");
-        TabSpec barTabSpec = tabHost.newTabSpec("tid4");
+        TabSpec beerTabSpec = tabHost.newTabSpec("tid1");
+        TabSpec barTabSpec = tabHost.newTabSpec("tid2");
+        TabSpec testSpec = tabHost.newTabSpec("tid3");
 
         /** TabSpec setIndicator() is used to set name for the tab. */
         /** TabSpec setContent() is used to set content for a particular tab. */
         //firstTabSpec.setIndicator("old f").setContent(new Intent(this,FirstTab.class));
         beerTabSpec.setIndicator("Beers").setContent(new Intent(this, BeerTab.class));
         barTabSpec.setIndicator("Bars").setContent(new Intent(this, BarTab.class));
+        testSpec.setIndicator("test").setContent(new Intent(this, BeerTestActivity.class));
 
         /** Add tabSpec to the TabHost to display. */
         //tabHost.addTab(firstTabSpec);
         tabHost.addTab(beerTabSpec);
         tabHost.addTab(barTabSpec);
+        tabHost.addTab(testSpec);
 
         setUpMapButton();
 
